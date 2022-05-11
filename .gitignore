@@ -1,0 +1,4 @@
+#   Archivos para ignorar
+
+/Server_Nodejs/node_modules
+/Server_Nodejs/package-lock.json
