@@ -12,3 +12,5 @@ bot de telegram para configurar uno nuevo
 ## Mandar mensajes bot JAVASCRIPT
 
 <https://tecnops.es/crear-un-bot-en-telegram-y-enviar-mensajes-usando-javascript/>
+
+<https://www.w3schools.com/nodejs/nodejs_email.asp>

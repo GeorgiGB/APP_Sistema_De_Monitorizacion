@@ -3,24 +3,24 @@ var nodemailer = require('nodemailer');
 
 //Creamos el objeto de que mandara el correo
 var transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: 'Gmail',
   auth: {
-    user: 'tucorreo@gmail.com',
-    pass: 'tucontraseña'
+    user: 'georgig200@gmail.com',
+    pass: 'vtopnviyrrinepgf'
   }
 })
 
 //  Mensaje de prueba
-var msg = 'prueba de mensaje con bot';
+var msg = 'prueba de mensaje con bot de correo';
 
 
 //  Cuerpo del mensaje enviante
 var mailOptions = {
-    from: 'tucorreo@gmail.com',
-    to: 'mi-amigo@yahoo.com',
-    subject: 'Asunto Del Correo',
+    from: 'georgig200@gmail.com',
+    to: 'joan_navarro@siguetusenda.com',
+    subject: 'PruebaMandarCorreo',
     text: msg
-}
+};
 
 //  Simple comando para mandar el correo
 transporter.sendMail(mailOptions, function(error, info){
