@@ -1,4 +1,4 @@
-# SistemaMonitorizacion
+# Sistema Monitorizacion
 
 Proyecto de sistema de monitorización de una base de datos 
 donde el servidor estara constantemente mandando peticiones al servidor el cual le tendra que devolver una respuesta.
