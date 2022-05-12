@@ -8,20 +8,20 @@ PARA LA LLAMADA SE NECESITARA CONSULTAR LA BASE DE DATOS Y COMPROBAR QUE TODOS L
 
 mandarCorreo(llamar_correo(json_correos))
 */
-function mandarCorreo(servicio, correo, pwd, recibe, msg){
+function mandarCorreo(servicio, remitente, pwd, para, msg){
 //Creamos el objeto de que mandara el correo
 var transporter = nodemailer.createTransport({
   service: servicio,
   auth: {
-    user: correo,
+    user: remitente,
     pass: pwd
   }
 })
 
 //  Cuerpo del mensaje enviante
 var mailOptions = {
-    from: correo,
-    to: recibe,
+    from: remitente,
+    to: para,
     subject: 'Error de servidor',
     text: msg
 };

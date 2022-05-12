@@ -7,6 +7,7 @@ CREATE OR REPLACE FUNCTION public.registrar_error(
     VOLATILE PARALLEL UNSAFE
 AS $BODY$
 --	Función que registrara un error de la tabla de acciones
+--  HARA UN INSERT DESDE LA TABLA DE ACCIONES A LOGS
 --  SELECT * FROM registrar_error('{}')
 
 DECLARE
