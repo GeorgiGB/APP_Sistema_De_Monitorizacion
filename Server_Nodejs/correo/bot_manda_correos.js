@@ -1,10 +1,14 @@
 //  Usar el paquete
 var nodemailer = require('nodemailer');
-var debug = require('./comandos/globales')
+var debug = require('./globales')
+var correo = require('./llamar_correo')
 
-//TODO forma temporal de mandar correo cuando sucede un error se tiene que pasar a la bd
+/*TODO forma temporal de mandar correo cuando sucede un error se tiene que pasar a la bd
+PARA LA LLAMADA SE NECESITARA CONSULTAR LA BASE DE DATOS Y COMPROBAR QUE TODOS LOS CAMPOS SE PUEDEN RELLENAR
 
-function mandarCorreo(servicio, correo, pwd, recibidor, asunto, msg){
+mandarCorreo(llamar_correo(json_correos))
+*/
+function mandarCorreo(servicio, correo, pwd, recibe, msg){
 //Creamos el objeto de que mandara el correo
 var transporter = nodemailer.createTransport({
   service: servicio,
@@ -17,8 +21,8 @@ var transporter = nodemailer.createTransport({
 //  Cuerpo del mensaje enviante
 var mailOptions = {
     from: correo,
-    to: recibidor,
-    subject: asunto,
+    to: recibe,
+    subject: 'Error de servidor',
     text: msg
 };
 
@@ -32,5 +36,7 @@ transporter.sendMail(mailOptions, function(error, info){
   });
 
 }
+
+correo(mandarCorreo)
 
 module.exports = mandarCorreo;
