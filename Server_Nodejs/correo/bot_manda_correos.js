@@ -1,32 +1,36 @@
 //  Usar el paquete
 var nodemailer = require('nodemailer');
+var debug = require('./comandos/globales')
 
+//TODO forma temporal de mandar correo cuando sucede un error se tiene que pasar a la bd
+
+function mandarCorreo(servicio, correo, pwd, recibidor, asunto, msg){
 //Creamos el objeto de que mandara el correo
 var transporter = nodemailer.createTransport({
-  service: 'Gmail',
+  service: servicio,
   auth: {
-    user: 'georgig200@gmail.com',
-    pass: 'vtopnviyrrinepgf'
+    user: correo,
+    pass: pwd
   }
 })
 
-//  Mensaje de prueba
-var msg = 'prueba de mensaje con bot de correo';
-
-
 //  Cuerpo del mensaje enviante
 var mailOptions = {
-    from: 'georgig200@gmail.com',
-    to: 'joan_navarro@siguetusenda.com',
-    subject: 'PruebaMandarCorreo',
+    from: correo,
+    to: recibidor,
+    subject: asunto,
     text: msg
 };
 
 //  Simple comando para mandar el correo
 transporter.sendMail(mailOptions, function(error, info){
     if (error) {
-      console.log(error);
+      debug.msg(error);
     } else {
-      console.log('Email enviado: ' + info.response);
+      debug.msg('Email enviado: ' + info.response);
     }
   });
+
+}
+
+module.exports = mandarCorreo;
