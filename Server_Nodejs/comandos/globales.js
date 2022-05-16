@@ -25,12 +25,11 @@ function msg(message){
     }
 }
 
-//  Función asincrona que permite la petición a la base de datos con la información solicitada
-// Esta función no és asíncrona
-/*async */function peticiones(response, res){
+//  Función que permite la petición a la base de datos con la información solicitada
+function peticiones(response, res){
 
     let responseErr = response[0].cod_error;
-    let status = ErrorServidor.error;
+    let status = CodigosServidor.error;
     with(RespuestasBBDD){
         switch (responseErr){
             case ok:
@@ -48,15 +47,14 @@ function msg(message){
             case invalidTextRepresentation:
                 
             case userOrPwdNotFound:
-                status = ErrorServidor.recursoNoEncontrado
+                status = CodigosServidor.recursoNoEncontrado
                 break;
                 
             default:
-                status = ErrorServidor.error;
+                status = CodigosServidor.error;
         }
     }
 
-   // status =status
     // Errores de la BBDD
     if(status == CodigosServidor.error){
         registrarErr(JSON.stringify(response[0]))
@@ -69,7 +67,7 @@ function msg(message){
 
 //  Función asincrona que añade un try cath para evitar errores
 //  y manda la peticion deseada
- function lanzarPeticion(x, req, res){
+function lanzarPeticion(x, req, res){
     //  ctoken = bearer token
     //  Esta linea recoge el token del usuario
     try {
@@ -88,10 +86,10 @@ function msg(message){
 }
 
 function errorDeServidor(res, err){
-    let msg_error = {status : ErrorServidor.error,
+    let msg_error = {status : CodigosServidor.error,
         cod_error: -1,
         msg_error: err.name + ': '+ err.message}
-    header(res).status(ErrorServidor.error).json(msg_error)
+    header(res).status(CodigosServidor.error).json(msg_error)
     registrarErr(JSON.stringify(msg_error))
 }
 

@@ -39,6 +39,13 @@ app.post('/login', (req, res) => {
 });
 
 /*
+TODO FUNCION QUE DETECTE ERRORES Y QUE MANDE UN CORREO O MENSAJE POR TELEGRAM
+*/
+const correo = require('./comandos/ver_correos');
+correo('{"correo":"georgig200@gmail.com"}');
+//globales.lanzarPeticion(correo);
+
+/*
         -------------------------Cerrar Sesion de Usuario-------------------------
     Cada usuario principal tiene un token asociado el cual solo se usara una vez,
     durante la sesión iniciada ese token estara activo. Hasta que el usuario decida salir de la aplicación,
@@ -47,3 +54,4 @@ app.post('/login', (req, res) => {
 app.post('/cerrar_sesion', (req, res) => {
     globales.lanzarPeticion(cerrar_sesion, req, res)
 });
+
