@@ -41,17 +41,19 @@ app.post('/login', (req, res) => {
 /*
 TODO FUNCION QUE DETECTE ERRORES Y QUE MANDE UN CORREO O MENSAJE POR TELEGRAM
 */
-const correo = require('./comandos/mirar_correos');
-correo();
+//const correo = require('./comandos/mirar_correos');
+//correo();
 
+const logs = require('./comandos/ver_logs')
 
 //globales.lanzarPeticion(correo);
 
 /*
 TODO CONFIGURAR BOT DE TELEGRAM
 */
-//const botTelegram = require('./bots/bot_telegram');
-//botTelegram()
+const botTelegram = require('./bots/bot_telegram');
+globales.msg(JSON.stringify(logs()))
+botTelegram(logs().toString());
 
 /*
         -------------------------Cerrar Sesion de Usuario-------------------------
