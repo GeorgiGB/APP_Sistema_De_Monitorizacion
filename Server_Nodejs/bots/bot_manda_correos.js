@@ -13,8 +13,8 @@ function mandarCorreo(){
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'ggbatalov@gmail.com',
-    pass: '910mnBQ28.'
+    user: '@gmail.com',
+    pass: ''
   }
 })
 
