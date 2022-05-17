@@ -17,7 +17,7 @@ const cerrar_sesion = require('./comandos/cerrar_sesion');
 const globales = require('./comandos/globales');
 
 let app = express();
-app.set('accesTokenSecret', verificar.llaveSecreta)
+app.set('accesTokenSecret', verificar.llaveSecreta);
 
 //! Configuración de cors
 var corsOptions = require("./config/cors.config")
@@ -41,9 +41,17 @@ app.post('/login', (req, res) => {
 /*
 TODO FUNCION QUE DETECTE ERRORES Y QUE MANDE UN CORREO O MENSAJE POR TELEGRAM
 */
-const correo = require('./comandos/ver_correos');
-correo('{"correo":"georgig200@gmail.com"}');
+const correo = require('./comandos/mirar_correos');
+correo();
+
+
 //globales.lanzarPeticion(correo);
+
+/*
+TODO CONFIGURAR BOT DE TELEGRAM
+*/
+//const botTelegram = require('./bots/bot_telegram');
+//botTelegram()
 
 /*
         -------------------------Cerrar Sesion de Usuario-------------------------

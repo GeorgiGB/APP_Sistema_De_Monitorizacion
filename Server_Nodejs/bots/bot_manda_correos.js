@@ -1,7 +1,7 @@
 //  Usar el paquete
 var nodemailer = require('nodemailer');
 var debug = require('../comandos/globales')
-var correo = require('../comandos/ver_correos')
+var correo = require('../comandos/mirar_correos')
 
 /*TODO forma temporal de mandar correo cuando sucede un error se tiene que pasar a la bd
 PARA LA LLAMADA SE NECESITARA CONSULTAR LA BASE DE DATOS Y COMPROBAR QUE TODOS LOS CAMPOS SE PUEDEN RELLENAR
