@@ -2,3 +2,5 @@
 
 /Server_Nodejs/node_modules
 /Server_Nodejs/package-lock.json
+/Server_Nodejs/Funciones/usuario.json
+/Server_Nodej/llamadasbot.js
