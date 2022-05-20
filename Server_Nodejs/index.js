@@ -26,7 +26,6 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(express.json())
 app.listen(8080);
-
 //! -------------------------------------
 globales.msg("Servidor ok");
 //! -------------------------------------
@@ -39,21 +38,31 @@ app.post('/login', (req, res) => {
 });
 
 /*
-TODO FUNCION QUE DETECTE ERRORES Y QUE MANDE UN CORREO O MENSAJE POR TELEGRAM
+TODO FUNCION QUE MANDE UN CORREO Y UN MENSAJE POR TELEGRAM
 */
-//const correo = require('./comandos/mirar_correos');
-//correo();
+const mandar_correo = require('./bots/bot_manda_correos');
+const logs = require('./comandos/ver_logs');
 
-const logs = require('./comandos/ver_logs')
+app.post('/mandar_correo', (req, res) => {
+    globales.lanzarPeticion(mandar_correo, req, res)
+});
 
-//globales.lanzarPeticion(correo);
-
+//logs('{"desde":"2022-05-17"}')
 /*
 TODO CONFIGURAR BOT DE TELEGRAM
 */
 const botTelegram = require('./bots/bot_telegram');
-globales.msg(JSON.stringify(logs()))
-botTelegram(logs().toString());
+botTelegram()
+
+app.post('/ver_logs',(req, res) =>{
+    
+    globales.lanzarPeticion(logs, req, res)
+    
+});
+
+app.post('/bot_telegram',(req,res)=>{
+    botTelegram(logs,req,res)
+})
 
 /*
         -------------------------Cerrar Sesion de Usuario-------------------------
@@ -65,3 +74,23 @@ app.post('/cerrar_sesion', (req, res) => {
     globales.lanzarPeticion(cerrar_sesion, req, res)
 });
 
+
+
+// var request = require('request');
+// var options = {
+//   'method': 'POST',
+//   'url': 'http://localhost:8080/ver_logs',
+//   'headers': {
+//     'Authorization': 'Bearer a',
+//     'Content-Type': 'application/json'
+//   },
+//   body: JSON.stringify({
+//     "desde": "2022-05-16",
+//     "hasta": "2022-05-19"
+//   })
+
+// };
+// request(options, function (error, response) {
+//   if (error) throw new Error(error);
+//   console.log(response.body);
+// });
