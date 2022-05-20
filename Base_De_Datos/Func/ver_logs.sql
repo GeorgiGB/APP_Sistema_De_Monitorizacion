@@ -1,3 +1,7 @@
+-- FUNCTION: public.ver_logs(jsonb)
+
+-- DROP FUNCTION IF EXISTS public.ver_logs(jsonb);
+
 CREATE OR REPLACE FUNCTION public.ver_logs(
 	jleer jsonb,
 	OUT jresultado jsonb)
@@ -64,3 +68,6 @@ BEGIN
 		SELECT excepcion FROM control_excepciones(SQLSTATE, SQLERRM) INTO jresultado;
 		END;
 $BODY$;
+
+ALTER FUNCTION public.ver_logs(jsonb)
+    OWNER TO postgres;

@@ -1,3 +1,7 @@
+-- FUNCTION: public.mirar_correos()
+
+-- DROP FUNCTION IF EXISTS public.mirar_correos();
+
 CREATE OR REPLACE FUNCTION public.mirar_correos(
 	OUT jresultado jsonb)
     RETURNS jsonb
@@ -7,23 +11,24 @@ CREATE OR REPLACE FUNCTION public.mirar_correos(
 AS $BODY$
 
 DECLARE
-	icod_correo integer;
-	cToken character varying;
 	icod_error integer;
 	cError character varying;
 	
 BEGIN
 	-- Inicializamos los parametros
-	cToken := '';
 	icod_error := 0;
 	cError := '';
     jresultado := '[]';
 	
-	SELECT jsonb_agg(correo) FROM correos into jresultado;
+	SELECT to_json(array_agg(co)) FROM (select correo from correos) co into jresultado;
+	-- select * from mirar_correos()
 	
-	-- Cuando haya un error, este tiene que enviara un mensaje al servidor y a traves de un nodemail se mandara el correo
-
+	SELECT ('{"cod_error":"' || icod_error ||'"}')::jsonb || jresultado ::jsonb INTO jresultado;
+	
 	EXCEPTION WHEN OTHERS THEN
 		select excepcion from control_excepciones(SQLSTATE, SQLERRM) into jresultado;
 		END;
 $BODY$;
+
+ALTER FUNCTION public.mirar_correos()
+    OWNER TO postgres;

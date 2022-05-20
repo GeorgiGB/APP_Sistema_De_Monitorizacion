@@ -14,21 +14,21 @@ AS $BODY$
 -- Funcion que actualizara la ultima fecha de uso del registro y acumular los usos
 DECLARE
 
-	registrolog character varying;
+	cRegistrolog character varying;
 
 BEGIN
 	iid:=res_id;
-	registrolog :='';
+	cRegistrolog :='';
 	-- Actualiza la tabla de acciones
 	UPDATE acciones as ac
 		SET fecha_ult_uso = CURRENT_TIMESTAMP, usos=usos+1
 			WHERE ac.id_acciones = res_id;
 	
-	SELECT descripcion FROM acciones ac LEFT JOIN logs lg ON ac.descripcion = lg.registros INTO registrolog;
+	SELECT descripcion FROM acciones ac LEFT JOIN logs lg ON ac.descripcion = lg.registros INTO cRegistrolog;
 
 	-- Registro de acciones en la tabla log
 	INSERT INTO logs(registros, acciones_id, resultado)
-		VALUES (registrolog, res_id, 'ko');
+		VALUES (registrolog, res_id, 'ko');--dejamos ko de forma predeterminada, falta desarrollar el tema de acciones
 END;
 $BODY$;
 
