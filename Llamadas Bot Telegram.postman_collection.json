@@ -1,0 +1,115 @@
+{
+	"info": {
+		"_postman_id": "168964f5-9ed1-42b0-b9c0-04850d86769a",
+		"name": "Llamadas Bot Telegram",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "BOT TELEGRAM",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:8080/bot_telegram",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"bot_telegram"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "URL BOT TELEGRAM",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.telegram.org/bot1078795718:AAGuecdHg_e2MWSgm1xIIrYdGMEj19nFCoI/sendMessage?text='+res+'&chat_id=950057203",
+					"protocol": "https",
+					"host": [
+						"api",
+						"telegram",
+						"org"
+					],
+					"path": [
+						"bot1078795718:AAGuecdHg_e2MWSgm1xIIrYdGMEj19nFCoI",
+						"sendMessage"
+					],
+					"query": [
+						{
+							"key": "text",
+							"value": "'+res+'"
+						},
+						{
+							"key": "chat_id",
+							"value": "950057203"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Mandar mensaje telegram",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"action\": \"send\",\r\n    \"chatId\": \"-531131\",\r\n    \"from\": \"0382305339\",\r\n    \"content\": \"Hello 7\"\r\n}"
+				},
+				"url": {
+					"raw": "https://script.google.com/macros/s/AKfycbzz7DAf-1H8pAtFauKLG9aVTTZaJv7OB832FWQlY6eTD-S3S1W0RM6OUy-2GRDqUDfn/exec",
+					"protocol": "https",
+					"host": [
+						"script",
+						"google",
+						"com"
+					],
+					"path": [
+						"macros",
+						"s",
+						"AKfycbzz7DAf-1H8pAtFauKLG9aVTTZaJv7OB832FWQlY6eTD-S3S1W0RM6OUy-2GRDqUDfn",
+						"exec"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Telegram frases rapidas",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"chat_id\": \"950057203\",\r\n    \"text\": \"test replyKeyboardMarkup\",\r\n    \r\n    \"reply_markup\": {\r\n    \t\"one_time_keyboard\":true,\r\n        \"keyboard\": [\r\n            [\r\n                {\r\n                    \"text\": \"osddgffdgdfgdfgdfgdfgk\",\r\n                    \"callback_data\":\"ok\"\r\n                },\r\n                                {\r\n                    \"text\": \"okdfgdfgfdgdfgdfgdfgdfgfhgf\",\r\n                    \"callback_data\":\"ok\"\r\n                },\r\n                                {\r\n                    \"text\": \"okfghfghfghgfhfghfghfghfhfghfg\",\r\n                    \"callback_data\":\"ok\"\r\n                },                {\r\n                    \"text\": \"okfghfghfghgfhfghfghfghfghfghfg\",\r\n                    \"callback_data\":\"ok\"\r\n                },\r\n                                {\r\n                    \"text\": \"okfhgfghfghfghfhfghfghfghfghfghfghgh\",\r\n                    \"callback_data\":\"ok\"\r\n                }\r\n            ],[\r\n            \t                {\r\n                    \"text\": \"osddgffdgdfgdfgdfgdfgk\",\r\n                    \"callback_data\":\"ok\"\r\n                },\r\n                                {\r\n                    \"text\": \"okdfgdfgfdgdfgdfgdfgdfgfhgf\",\r\n                    \"callback_data\":\"ok\"\r\n                },\r\n                                {\r\n                    \"text\": \"okfghfghfghgfhfghfghfghfhfghfg\",\r\n                    \"callback_data\":\"ok\"\r\n                },                {\r\n                    \"text\": \"okfghfghfghgfhfghfghfghfghfghfg\",\r\n                    \"callback_data\":\"ok\"\r\n                },\r\n                                {\r\n                    \"text\": \"okfhgfghfghfghfhfghfghfghfghfghfghgh\",\r\n                    \"callback_data\":\"ok\"\r\n                }\r\n            \t]\r\n        ]\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "https://api.telegram.org/bot5376651327:AAEkV6M9BYI-FgubYtYQjxSnJuZQyxUQqwM/sendMessage",
+					"protocol": "https",
+					"host": [
+						"api",
+						"telegram",
+						"org"
+					],
+					"path": [
+						"bot5376651327:AAEkV6M9BYI-FgubYtYQjxSnJuZQyxUQqwM",
+						"sendMessage"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
