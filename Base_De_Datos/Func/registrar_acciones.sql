@@ -1,3 +1,7 @@
+-- FUNCTION: public.registra_acciones(integer)
+
+-- DROP FUNCTION IF EXISTS public.registra_acciones(integer);
+
 CREATE OR REPLACE FUNCTION public.registra_acciones(
 	res_id integer,
 	OUT iid integer)
@@ -17,13 +21,16 @@ BEGIN
 	registrolog :='';
 	-- Actualiza la tabla de acciones
 	UPDATE acciones as ac
-		set fecha_ult_uso = CURRENT_TIMESTAMP, usos=usos+1
+		SET fecha_ult_uso = CURRENT_TIMESTAMP, usos=usos+1
 			WHERE ac.id_acciones = res_id;
 	
-	select descripcion from acciones ac left join logs lg on ac.descripcion = lg.registros into registrolog;
+	SELECT descripcion FROM acciones ac LEFT JOIN logs lg ON ac.descripcion = lg.registros INTO registrolog;
 
 	-- Registro de acciones en la tabla log
 	INSERT INTO logs(registros, acciones_id, resultado)
 		VALUES (registrolog, res_id, 'ko');
 END;
 $BODY$;
+
+ALTER FUNCTION public.registra_acciones(integer)
+    OWNER TO postgres;
