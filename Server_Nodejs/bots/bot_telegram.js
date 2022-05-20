@@ -40,6 +40,12 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
   bot.sendMessage(chatId, resp);
 });
 
+// bot.sendMessage(msg.chat.id, "Opciones", {
+//   "reply_markup": {
+//       "keyboard": [["Ultimos Registros", "Second sample"]]
+//       }
+//   });
+
 // Listen for any kind of message. There are different kinds of
 // messages.
 bot.on('message', (msgBot) => {

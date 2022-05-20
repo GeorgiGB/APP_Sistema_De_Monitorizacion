@@ -58,7 +58,7 @@ app.post('/mandar_correo', (req, res) => {
 TODO CONFIGURAR BOT DE TELEGRAM
 */
 
-bot.botTelegram(logs.registrarLogs)
+bot.botTelegram()
 
 /*
     POST para crear un archivo de logs

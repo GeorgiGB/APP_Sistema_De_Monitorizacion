@@ -7,6 +7,8 @@ npm install nodemon
 //Manda mensaje al correo
 npm install nodemailer
 
+npm install node-telegram-bot-api
+
 bot de telegram para configurar uno nuevo
 
 ## Mandar mensajes bot JAVASCRIPT
