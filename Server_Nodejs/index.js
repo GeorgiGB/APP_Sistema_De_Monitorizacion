@@ -12,13 +12,17 @@ const verificar = require('./comandos/login');
 //  Cambiara el estado del token del usuario
 const cerrar_sesion = require('./comandos/cerrar_sesion');
 
-//  Llamada del bot de Telegram
-const bot = require('./bots/bot_telegram');
+// ! Crear una comprobación de si existe el archivo
+// log
 
 //  Llamada del comando logs para registrar un archivos de logs.json
 const logs = require('./comandos/ver_logs');
 
 logs.registrarLogs()
+
+
+//  Llamada del bot de Telegram
+const bot = require('./bots/bot_telegram');
 
 //  Funciones generales del programa
 const globales = require('./comandos/globales');

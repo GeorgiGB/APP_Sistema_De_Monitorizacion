@@ -19,7 +19,7 @@ async function ver_logs(json_logs){
 async function registrarLogs(x){
     if(x!=null){
       try{
-        let mensaje = x.nombre
+          print(x);
         fs.writeFileSync("logs.json", x,function (err){
             // si se produce un error al escribir un fichero y lo lanzamos
             // el servidor se cuelga
@@ -27,15 +27,15 @@ async function registrarLogs(x){
         }catch (err){
             msg(err)
     }}else{
-    //     try{
-    //         fs.writeFileSync("logs.json", "[{}]",function (err){
-    //         // si se produce un error al escribir un fichero y lo lanzamos
-    //         // el servidor se cuelga
-    //         if (err) throw err;});
-    //     }catch (err){
-    //         msg(err)
+        try{
+            fs.writeFileSync("logs.json", "[{}]",function (err){
+            // si se produce un error al escribir un fichero y lo lanzamos
+            // el servidor se cuelga
+            if (err) throw err;});
+        }catch (err){
+            msg(err)
         
-    // }
+    }
     
 }
 }
