@@ -1,4 +1,4 @@
-const conexion = require('../config/conexion_bd.config')
+const conexion = require('../config/conexion_bd.js')
 
 // Generar tokens con formato JWT
 const jwt = require('jsonwebtoken');

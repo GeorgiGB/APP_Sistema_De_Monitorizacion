@@ -3,63 +3,46 @@ var debug = require('../comandos/globales')
 var log = require('../logs.json')
 const cron = require('node-cron')
 const tokenBot = require('./tokenBot.json')
-//var mensa = require('./mensaje')
+const ust = require('../usuarios_telegram.json')
 
+//  Funcion que manda un mensaje de notificacion tanto en correo como en telegram
 function notificacion()
 {
-  
-  debug.msg(log[0])
-  if(!log[0].cod_error){
-    return 'No hay mensajes';
-  }else{
+  if(log[1]&&log[1].nombre){
     return [
-    'Codigo de error: '+log[0].cod_error+
-    '\nNombre: '+log[1].nombre+
-    '\nId: '+log[1].id_logs+
-    '\nRegistro: '+log[1].registros+
-    '\nFecha de alta: '+log[1].fecha_alta+
-    '\nNombre de la accion: '+log[1].acciones_id+
-    '\n-----------------------'+
-    '\nResultado: '+log[1].resultado+
-    '\n-----------------------',
-    ];
+      'Codigo de error: '+log[0].cod_error+
+      '\nNombre: '+log[1].nombre+
+      '\nId: '+log[1].id_logs+
+      '\nRegistro: '+log[1].registros+
+      '\nFecha de alta: '+log[1].fecha_alta+
+      '\nNombre de la accion: '+log[1].acciones_id+
+      '\n-----------------------'+
+      '\nResultado: '+log[1].resultado+
+      '\n-----------------------',
+      ];
+  }else{
+    //  Si el json esta vacio mandaremos un mensaje predeterminado
+    return 'No hay mensajes';
   }
 }
 
+function recorrerUsu(i){
+  for(i of ust){
+    value +=1;
+    debug.msg(i)
+  }
+}
 
 async function botTelegram(){
-//const url = 'https://api.telegram.org/bot1078795718:AAGuecdHg_e2MWSgm1xIIrYdGMEj19nFCoI/sendMessage?text='+res+'&chat_id=950057203'
-// replace the value below with the Telegram token you receive from @BotFather
-
+//  Token del bot
 const token = tokenBot.token;
-
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
-//Matches "/echo [whatever]"
-bot.onText(/\/echo (.+)/, (msg, match) => {
-
-  const chatId = msg.chat.id;
-  const resp = match[1]; // the captured "whatever"
-
-  // send back the matched "whatever" to the chat
-  bot.sendMessage(chatId, resp);
-});
-
-// bot.sendMessage(msg.chat.id, "Opciones", {
-//   "reply_markup": {
-//       "keyboard": [["Ultimos Registros", "Second sample"]]
-//       }
-//   });
-
-// Listen for any kind of message. There are different kinds of
-// messages.
-bot.on('message', (msgBot) => {
-  const chatId = msgBot.chat.id;
-  bot.sendMessage(chatId, 'MENSAJE DEL SERVIDOR:\n'+notificacion());
-  // send a message to the chat acknowledging receipt of their message
-});
-
+//  Manda un mensaje automático de los errores del dia actual
+  debug.msg('Mandando mensaje automatico a los usuarios');
+  debug.msg(JSON.parse(ust));
+  bot.sendMessage(JSON.parse(ust),'MENSAJE DEL SERVIDOR:\n'+notificacion());
 }
 
 module.exports={

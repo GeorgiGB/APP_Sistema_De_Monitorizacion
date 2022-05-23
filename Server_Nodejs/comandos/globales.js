@@ -108,8 +108,28 @@ function registrarErr(msgerr){
         msg(err)
     }}
 
+function crearJSon(nombre, x){
+    if(x == undefined){
+           try{
+        msg("ha entrado "+x);
+        fs.writeFileSync(nombre+".json", "[{}]",function (err){
+            if (err) throw err;});
+        }catch (err){
+            msg(err)
+    }}else{
+        try{
+            fs.writeFileSync(nombre+".json", x,function (err){
+            // si se produce un error al escribir un fichero y lo lanzamos
+            // el servidor se cuelga
+            if (err) throw err;});
+        }catch (err){
+            msg(err)   
+    }}   
+}
+
 module.exports = {
     msg:msg,
     peticiones:peticiones,
-    lanzarPeticion:lanzarPeticion
+    lanzarPeticion:lanzarPeticion,
+    crearJSon:crearJSon
 }

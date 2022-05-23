@@ -1,4 +1,4 @@
-const conexion = require('../config/conexion_bd.config');
+const conexion = require('../config/conexion_bd.js');
 const { msg } = require('./globales');
 //  Función asincrona para cambiar el estado del token
 async function cerrar_sesion(json_sesion){
