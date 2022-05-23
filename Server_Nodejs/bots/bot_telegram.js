@@ -7,17 +7,23 @@ const tokenBot = require('./tokenBot.json')
 
 function notificacion()
 {
-  return [
-  'Codigo de error: '+log[0].cod_error+
-  '\nNombre: '+log[1].nombre+
-  '\nId: '+log[1].id_logs+
-  '\nRegistro: '+log[1].registros+
-  '\nFecha de alta: '+log[1].fecha_alta+
-  '\nNombre de la accion: '+log[1].acciones_id+
-  '\n-----------------------'+
-  '\nResultado: '+log[1].resultado+
-  '\n-----------------------',
-  ];
+  
+  debug.msg(log[0])
+  if(!log[0].cod_error){
+    return 'No hay mensajes';
+  }else{
+    return [
+    'Codigo de error: '+log[0].cod_error+
+    '\nNombre: '+log[1].nombre+
+    '\nId: '+log[1].id_logs+
+    '\nRegistro: '+log[1].registros+
+    '\nFecha de alta: '+log[1].fecha_alta+
+    '\nNombre de la accion: '+log[1].acciones_id+
+    '\n-----------------------'+
+    '\nResultado: '+log[1].resultado+
+    '\n-----------------------',
+    ];
+  }
 }
 
 
