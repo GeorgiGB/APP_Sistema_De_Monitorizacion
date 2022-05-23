@@ -28,3 +28,25 @@ Comprobar el tipo de elemento:
   //     debug.msg(key+" "+element)
   //   }
   // }
+
+## Mandar mensaje automaticos en telegram
+
+Para la creación de un bot en telegram, necesitamos acceder a la aplicación de Telegram y hablar con @botFather, permite crear un bot en sencillos pasos. Al seguir los pasos el botFather te dara el token del bot. El cual se usara para la configuración en node para la conexión.
+
+Necesitas instalar el modulo de telegram, npm install node-telegram-bot-api. Creamos un nuevo archivo en donde ira nuestro bot.
+
+```js
+const TelegramBot = require('node-telegram-bot-api');
+
+async function botTelegram(){
+//  Token del bot
+const token = token;
+
+// Create a bot that uses 'polling' to fetch new updates
+const bot = new TelegramBot(token, {polling: true});
+
+//  Manda un mensaje
+bot.sendMessage(msgBot.chat.id,'Mensaje de prueba');
+
+}
+```
