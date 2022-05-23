@@ -6,5 +6,4 @@
 /Server_Nodejs/logs.json
 /Server_Nodejs/bots/tokenBot.json
 /Server_Nodejs/config/conexion_bd.config.js
-/Server_Nodejs/usuarios_telegram.json
-/Server_Nodejs/registroLogs.txt
+/Server_Nodejs/Registros/
