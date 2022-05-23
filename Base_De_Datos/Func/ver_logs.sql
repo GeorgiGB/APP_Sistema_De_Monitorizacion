@@ -26,6 +26,7 @@ BEGIN
 	cError := '';
 	cBusca :='';
     jresultado := '[]';
+	--jleer:= coalesce(jleer, '{}'::jsonb);
 	
 	SELECT coalesce(jleer::jsonb->>'busca', '') into cBusca;
 	
@@ -62,8 +63,10 @@ BEGIN
 					l.resultado = j.res
 			END) operacion into jresultado;
 			
+			jresultado := coalesce(jresultado, '[]'::jsonb);
+			
 			SELECT ('{"cod_error":"' || icod_error ||'"}')::jsonb || jresultado ::jsonb INTO jresultado;
-		
+				
 	EXCEPTION WHEN OTHERS THEN
 		SELECT excepcion FROM control_excepciones(SQLSTATE, SQLERRM) INTO jresultado;
 		END;

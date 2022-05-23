@@ -30,6 +30,9 @@ AS $BODY$
 					WHEN cod_error = '22P02' THEN
 						--cod_error :='-22P02';
 						cerror := 'invalid_text_representation';
+						
+					WHEN cod_error ='22007' THEN
+						cerror :='sintaxis de entrada es incorrecta';
 					
 					-- Otros posibles errores no contemplados
 					ELSE
@@ -42,4 +45,3 @@ $BODY$;
 
 ALTER FUNCTION public.control_excepciones(character varying, character varying)
     OWNER TO postgres;
-
