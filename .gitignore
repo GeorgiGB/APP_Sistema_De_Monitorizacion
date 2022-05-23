@@ -5,3 +5,4 @@
 /Server_Nodejs/usuario.json
 /Server_Nodejs/logs.json
 /Server_Nodejs/bots/tokenBot.json
+/Server_Nodejs/config/conexion_bd.config.js
