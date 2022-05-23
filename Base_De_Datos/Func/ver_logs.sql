@@ -61,7 +61,8 @@ BEGIN
 						true
 				ELSE
 					l.resultado = j.res
-			END) operacion into jresultado;
+			END
+	ORDER BY l.fecha_alta) operacion into jresultado;
 			
 			jresultado := coalesce(jresultado, '[]'::jsonb);
 			
