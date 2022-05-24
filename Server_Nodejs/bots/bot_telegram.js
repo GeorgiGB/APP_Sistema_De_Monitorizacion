@@ -1,7 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
 var debug = require('../comandos/globales')
 var log = require('../logs.json')
-const cron = require('node-cron')
 const tokenBot = require('./tokenBot.json')
 const ust = require('../usuarios_telegram.json')
 
@@ -26,13 +25,6 @@ function notificacion()
   }
 }
 
-function recorrerUsu(i){
-  for(i of ust){
-    value +=1;
-    debug.msg(i)
-  }
-}
-
 async function botTelegram(){
 //  Token del bot
 const token = tokenBot.token;
@@ -41,8 +33,13 @@ const bot = new TelegramBot(token, {polling: true});
 
 //  Manda un mensaje automático de los errores del dia actual
   debug.msg('Mandando mensaje automatico a los usuarios');
-  debug.msg(JSON.parse(ust));
-  bot.sendMessage(JSON.parse(ust),'MENSAJE DEL SERVIDOR:\n'+notificacion());
+  var chatIds = ust.slice(1);
+  
+  for (const key in chatIds) {
+      const chat_id = chatIds[key].chat_id;
+      //debug.msg(chat_id)
+      bot.sendMessage(chat_id,'MENSAJE DEL SERVIDOR:\n'+notificacion());
+  }
 }
 
 module.exports={

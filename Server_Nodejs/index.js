@@ -65,29 +65,37 @@ app.post('/mandar_correo', (req, res) => {
     debug.lanzarPeticion(mandar_correo, req, res)
 });
 
-/*
-cron.schedule('1 * * * * *', ()=>{
-    debug.msg('Mandando correo')
-    mandar_correo()
-})
-*/
-
 ust()
 /*
 TODO CONFIGURAR BOT DE TELEGRAM
 */
 //ust() //VER USUARIOS TELEGRAM
 
-cron.schedule('* * * * * *',()=>{
+const job = cron.schedule('* * * * * *',()=>{
     debug.msg("Enviando mensajes a telegram")
-    bot.botTelegram()
+    let res_anterior = []
+    logs({desde:"2022-05-18", hasta:"2022-05-20"}).then((x)=>{
+        debug.msg(x)
+        let res = x
+        if(res_anterior!=res){
+            res = res_anterior
+            debug.msg("mandando mensaje desde index")
+        }else{
+            debug.msg("no hay novedades")
+        }
+    })
+    
+    //bot.botTelegram()
 
     /*debug.msg("-----------------------------")
 
     debug.msg('Mandando correo')
     mandar_correo()*/
-})
+},{
+    scheduled: false
+});
 
+job.start();
 
 /*
     POST para crear un archivo de logs

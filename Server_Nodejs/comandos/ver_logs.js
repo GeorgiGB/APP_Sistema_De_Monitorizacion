@@ -2,7 +2,7 @@ const conexion = require('../config/conexion_bd.js');
 const debug = require('./globales');
 
 async function ver_logs(json_logs){
-
+    debug.msg(json_logs)
     //si el estado esta vacio, mandara los registros del dia actual
     let res_logs = await conexion.query("SELECT * FROM ver_logs('"+JSON.stringify(json_logs)+"');");
     
