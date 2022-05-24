@@ -33,14 +33,14 @@ BEGIN
 	--SELECT array_to_json(array_agg(l)) FROM logs l INTO jresultado;
 	
 	CREATE TEMP TABLE IF NOT EXISTS json_select_log as
-		SELECT fecha_alta as desde, fecha_alta as hasta, resultado as res FROM logs
+		SELECT lg_fecha_alta as desde, lg_fecha_alta as hasta, lg_estado as estado FROM logs
 			WHERE false; -- te devuelve el tipo de record
 			
 	SELECT to_json(array_agg(operacion)) FROM
-	(SELECT l.*, ac.nombre FROM logs l,
+	(SELECT l.*, ac.acc_nombre, ac.acc_descripcion FROM logs l,
 	 acciones ac, jsonb_populate_record(null::json_select_log, jleer) j
-		WHERE l.acciones_id = ac.id_acciones
-	 	AND l.fecha_alta BETWEEN
+		WHERE l.lg_acciones_id = ac.acc_id_acciones
+	 	AND l.lg_fecha_alta BETWEEN
 			CASE
 				WHEN j.desde IS null THEN
 				NOW()--indica el dia de hoy
@@ -54,15 +54,15 @@ BEGIN
 					ELSE
 					j.hasta
 					END
-			AND l.registros LIKE '%'||cBusca||'%'
+			AND l.lg_registros LIKE '%'||cBusca||'%'
 			AND
 				CASE
-					WHEN j.res is null THEN
+					WHEN j.estado is null THEN
 						true
 				ELSE
-					l.resultado = j.res
+					l.lg_estado = j.estado
 			END
-	ORDER BY l.fecha_alta) operacion into jresultado;
+	ORDER BY l.lg_fecha_alta) operacion into jresultado;
 			
 			jresultado := coalesce(jresultado, '[]'::jsonb);
 			
