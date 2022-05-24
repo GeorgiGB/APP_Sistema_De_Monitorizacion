@@ -100,7 +100,7 @@ job.start();
     POST para crear un archivo de logs
 */
 app.post('/ver_logs',(req, res) =>{
-    globales.lanzarPeticion(logs.ver_logs, req, res)
+    globales.lanzarPeticion(logs, req, res)
 });
 
 /*
