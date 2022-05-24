@@ -18,6 +18,9 @@ const cerrar_sesion = require('./comandos/cerrar_sesion');
 // Llamada a los usuarios de telegram
 const ust = require('./comandos/ver_usuarios_telegram');
 
+//Inicializamos los usuarios de telegram
+ust()
+
 //  Llamada del comando logs para registrar un archivos de logs.json
 const logs = require('./comandos/ver_logs');
 
@@ -25,7 +28,7 @@ const logs = require('./comandos/ver_logs');
 const bot = require('./bots/bot_telegram');
 
 //  Funciones generales del programa
-const debug = require('./comandos/globales');
+const globales = require('./comandos/globales');
 
 let app = express();
 app.set('accesTokenSecret', verificar.llaveSecreta);
@@ -39,19 +42,19 @@ app.use(bodyParser.json());
 app.use(express.json())
 app.listen(8080);
 //! -------------------------------------
-debug.msg("Servidor ok");
+globales.msg("Servidor ok");
 //! -------------------------------------
 
 /*
     Iniciar sesión con el usuario
 */
 app.post('/login', (req, res) => {
-    debug.lanzarPeticion(verificar, req, res)
+    globales.lanzarPeticion(verificar, req, res)
 });
 
 
 app.post('/ver_ust', (req, res) => {
-    debug.lanzarPeticion(ust, req, res)
+    globales.lanzarPeticion(ust, req, res)
 });
 
 
@@ -62,37 +65,33 @@ TODO FUNCION QUE MANDE UN CORREO Y UN MENSAJE POR TELEGRAM
 const mandar_correo = require('./bots/bot_manda_correos');
 
 app.post('/mandar_correo', (req, res) => {
-    debug.lanzarPeticion(mandar_correo, req, res)
+    globales.lanzarPeticion(mandar_correo, req, res)
 });
 
-ust()
 /*
 TODO CONFIGURAR BOT DE TELEGRAM
 */
 //ust() //VER USUARIOS TELEGRAM
 
 const job = cron.schedule('* * * * * *',()=>{
-    debug.msg("Enviando mensajes a telegram")
     let res_anterior = []
     logs({desde:"2022-05-18", hasta:"2022-05-20"}).then((x)=>{
-        debug.msg(x)
+        globales.msg(x)
         let res = x
         if(res_anterior!=res){
             res = res_anterior
-            debug.msg("mandando mensaje desde index")
+            globales.msg("mandando mensaje desde index")
+            bot.botTelegram()
         }else{
-            debug.msg("no hay novedades")
-        }
-    })
-    
-    //bot.botTelegram()
+            globales.msg("no hay novedades")
+    }
+})
+    /*globales.msg("-----------------------------")
 
-    /*debug.msg("-----------------------------")
-
-    debug.msg('Mandando correo')
+    globales.msg('Mandando correo')
     mandar_correo()*/
 },{
-    scheduled: false
+    scheduled: true
 });
 
 job.start();
@@ -101,7 +100,7 @@ job.start();
     POST para crear un archivo de logs
 */
 app.post('/ver_logs',(req, res) =>{
-    debug.lanzarPeticion(logs.ver_logs, req, res)
+    globales.lanzarPeticion(logs.ver_logs, req, res)
 });
 
 /*
@@ -111,6 +110,6 @@ app.post('/ver_logs',(req, res) =>{
     el cual cambiara al estado de 'false' y no se volvera a utilizar.
 */
 app.post('/cerrar_sesion', (req, res) => {
-    debug.lanzarPeticion(cerrar_sesion, req, res)
+    globales.lanzarPeticion(cerrar_sesion, req, res)
 });
 

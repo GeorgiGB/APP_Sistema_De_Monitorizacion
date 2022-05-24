@@ -1,10 +1,10 @@
 //  Usar el paquete
 const conexion = require('../config/conexion_bd.js');
 var nodemailer = require('nodemailer');
-var debug = require('../comandos/globales');
+var globales = require('../comandos/globales');
 const profile = require('../usuario.json')
 const log = require('../logs.json')
-const notificacion = require('./bot_telegram')
+const notificacion = require('./notificacion')
 
 async function mandarCorreo(){
 //  Petición al servidor para obtener los correos
@@ -30,22 +30,22 @@ var mailOptions = {
                   log[1].nombre
                   :
                   'No hay mensajes',// El asunto sera el nombre del error del servidor
-    text: notificacion.notificacion().toString()// El mensaje sera toda la estructura del error
+    text: notificacion()// El mensaje sera toda la estructura del error
 };
 
 //  Comando para mandar el correo junto con mailOptions
 transporter.sendMail(mailOptions, function(error, info){
-    debug.msg("CORREO ENVIADO: ")
-    debug.msg(mailOptions)
+    globales.msg("CORREO ENVIADO: ")
+    globales.msg(mailOptions)
     
     if (error) {
-      debug.msg(error);
+      globales.msg(error);
     } else {
-      debug.msg('Email enviado: ' + info.response);
+      globales.msg('Email enviado: ' + info.response);
     }
     transporter.close();
   });
-debug.msg("mensaje enviado "+ mailOptions)
+globales.msg("mensaje enviado "+ mailOptions)
 }
 
 module.exports = mandarCorreo;
