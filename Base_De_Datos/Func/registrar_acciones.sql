@@ -21,7 +21,7 @@ BEGIN
 	cRegistrolog :='';
 	-- Actualiza la tabla de acciones
 	UPDATE acciones as ac
-		SET fecha_ult_uso = CURRENT_TIMESTAMP, usos=usos+1
+		SET fecha_ult_uso = NOW(), usos=usos+1
 			WHERE ac.id_acciones = res_id;
 	
 	SELECT descripcion FROM acciones ac LEFT JOIN logs lg ON ac.descripcion = lg.registros INTO cRegistrolog;

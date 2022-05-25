@@ -27,6 +27,12 @@ const logs = require('./comandos/ver_logs');
 //  Llamada del bot de Telegram
 const bot = require('./bots/bot_telegram');
 
+//  Ver las acciones del servidor
+const ver_acciones = require('./comandos/ver_acciones')
+
+//  Automatiza las acciones de la tabla
+const lanzarAcciones = require('./comandos/lanzar_accion')
+
 //  Funciones generales del programa
 const globales = require('./comandos/globales');
 
@@ -75,13 +81,13 @@ TODO CONFIGURAR BOT DE TELEGRAM
 
 const job = cron.schedule('* * * * * *',()=>{
     let res_anterior = []
-    logs({desde:"2022-05-18", hasta:"2022-05-20"}).then((x)=>{
+    logs({desde:"2022-05-17", hasta:"2022-05-20"}).then((x)=>{
         globales.msg(x)
         let res = x
         if(res_anterior!=res){
             res = res_anterior
             globales.msg("mandando mensaje desde index")
-            bot.botTelegram()
+            r = bot()
         }else{
             globales.msg("no hay novedades")
     }
@@ -94,7 +100,9 @@ const job = cron.schedule('* * * * * *',()=>{
     scheduled: true
 });
 
-job.start();
+//  Hacer funciones automaticas cada x tiempo
+
+job.stop();
 
 /*
     POST para crear un archivo de logs
@@ -102,6 +110,16 @@ job.start();
 app.post('/ver_logs',(req, res) =>{
     globales.lanzarPeticion(logs, req, res)
 });
+
+
+/*
+    POST para ver la tablas de acciones
+*/
+app.post('/ver_acciones',(req, res) =>{
+    globales.lanzarPeticion(ver_acciones, req, res)
+});
+
+lanzarAcciones.lanzaAcciones()
 
 /*
         -------------------------Cerrar Sesion de Usuario-------------------------

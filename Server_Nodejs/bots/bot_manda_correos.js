@@ -3,6 +3,7 @@ const conexion = require('../config/conexion_bd.js');
 var nodemailer = require('nodemailer');
 var globales = require('../comandos/globales');
 const profile = require('../usuario.json')
+
 const log = require('../logs.json')
 const notificacion = require('./notificacion')
 
@@ -44,6 +45,8 @@ transporter.sendMail(mailOptions, function(error, info){
       globales.msg('Email enviado: ' + info.response);
     }
     transporter.close();
+  }).then(()=>{
+    //FUNCION PARA ACTUALIZAR LA TABLA DE CORREOS LOG ENVIADO
   });
 globales.msg("mensaje enviado "+ mailOptions)
 }

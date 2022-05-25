@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 var globales = require('../comandos/globales')
 const tokenBot = require('./tokenBot.json')
-
+const notificacion = require('./notificacion')
 globales.crearJSon('usuarios_telegram','[{}]')
 const ust = require('../usuarios_telegram.json')
 
@@ -18,10 +18,11 @@ const bot = new TelegramBot(token, {polling: true});
   for (const key in chatIds) {
       const chat_id = chatIds[key].chat_id;
       globales.msg(chat_id.toString())
-      bot.sendMessage(chat_id,'MENSAJE DEL SERVIDOR:\n'+notificacion());
+      bot.sendMessage(chat_id,'MENSAJE DEL SERVIDOR:\n'+notificacion()).then(()=>{
+        //FUNCION QUE ACTUALICE LA TABLA DE TELEGRAM LOG ENVIADOS
+        
+      });
   }
 }
 
-module.exports={
-  botTelegram:botTelegram
-}
+module.exports=botTelegram;
