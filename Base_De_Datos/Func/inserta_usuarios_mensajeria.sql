@@ -10,7 +10,9 @@ CREATE OR REPLACE FUNCTION public.inserta_usuarios_mensajeria(
     COST 100
     VOLATILE PARALLEL UNSAFE
 AS $BODY$
--- SELECT * from inserta_usuarios_mensajeria('[{"usuario":"Joselito", "mensajeria":{"telegram":"0000","correo_e":"@meme.com"}}]'::jsonb);
+-- Este usuarios si que se registra , pues llos tipos coinciden con el enum "t_envios"
+-- SELECT * from inserta_usuarios_mensajeria('[{"usuario":"Joselito", "mensajeria":{"telegram":"0000","email":"@meme.com"}}]'::jsonb);
+-- Este usuarios no  se registra, pues el tipo correo_e no coincide con el enum "t_envios"
 -- SELECT * from inserta_usuarios_mensajeria('[{"usuario":"Eva", "mensajeria":{"telegram":"0000","correo_e":"@meme.com"}}]'::jsonb);
 DECLARE
 	icod_error integer;
