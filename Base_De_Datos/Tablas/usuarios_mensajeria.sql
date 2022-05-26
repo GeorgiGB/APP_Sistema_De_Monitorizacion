@@ -1,6 +1,6 @@
 -- Table: public.usuarios_mensajeria
 
-DROP TABLE IF EXISTS public.usuarios_mensajeria;
+-- DROP TABLE IF EXISTS public.usuarios_mensajeria;
 
 CREATE TABLE IF NOT EXISTS public.usuarios_mensajeria
 (
