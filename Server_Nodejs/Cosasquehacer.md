@@ -111,15 +111,25 @@ cron.schedule('*****', () => {
 
 ```
 
+[nodecron](https://github.com/node-cron/node-cron)
+
 Cada "*" representa los meses, dias, horas, minutos y segundos
 
-|-----------  segundos (opcional)
-| |---------  minutos (0-59)
-| | |-------  horas (0-59)
-| | | |-----  dia de la semana(1-31)
-| | | | |---  meses(1-12 o nombres)
-| | | | | |-  dia del mes(0-7 o nombres)
-* * * * * *
+```
+# |-----------  segundos (opcional)
+
+# | |---------  minutos (0-59)
+
+# | | |-------  horas (0-59)
+
+# | | | |-----  dia de la semana(1-31)
+
+# | | | | |---  meses(1-12 o nombres)
+
+# | | | | | |-  dia del mes(0-7 o nombres)
+
+# * * * * * *
+```
 
 Para hacer que el bot vaya constantemente haciendo peticiones en la base de datos introduciremos el bot de telegram al modulo schedule inicializandolo en el index.js
 
