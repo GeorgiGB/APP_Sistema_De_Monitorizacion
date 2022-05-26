@@ -15,11 +15,14 @@ const verificar = require('./comandos/login');
 //  Cambiara el estado del token del usuario
 const cerrar_sesion = require('./comandos/cerrar_sesion');
 
+//! TODO rehacer la función de ver_usuarios_telegram
+//! por ver usuarios_mensajeria
 // Llamada a los usuarios de telegram
 const ust = require('./comandos/ver_usuarios_telegram');
 
-//Inicializamos los usuarios de telegram
-ust()
+//! De momento esta llamada se comenta
+// Inicializamos los usuarios de telegram
+// ust()
 
 //  Llamada del comando logs para registrar un archivos de logs.json
 const logs = require('./comandos/ver_logs');
@@ -47,9 +50,6 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(express.json())
 app.listen(8080);
-//! -------------------------------------
-globales.msg("Servidor ok");
-//! -------------------------------------
 
 /*
     Iniciar sesión con el usuario
@@ -65,44 +65,14 @@ app.post('/ver_ust', (req, res) => {
 
 
 
-/*
-TODO FUNCION QUE MANDE UN CORREO Y UN MENSAJE POR TELEGRAM
-*/
+
 const mandar_correo = require('./bots/bot_manda_correos');
 
 app.post('/mandar_correo', (req, res) => {
     globales.lanzarPeticion(mandar_correo, req, res)
 });
 
-/*
-TODO CONFIGURAR BOT DE TELEGRAM
-*/
-//ust() //VER USUARIOS TELEGRAM
 
-const job = cron.schedule('* * * * * *',()=>{
-    let res_anterior = []
-    logs({desde:"2022-05-17", hasta:"2022-05-20"}).then((x)=>{
-        globales.msg(x)
-        let res = x
-        if(res_anterior!=res){
-            res = res_anterior
-            globales.msg("mandando mensaje desde index")
-            r = bot()
-        }else{
-            globales.msg("no hay novedades")
-    }
-})
-    /*globales.msg("-----------------------------")
-
-    globales.msg('Mandando correo')
-    mandar_correo()*/
-},{
-    scheduled: true
-});
-
-//  Hacer funciones automaticas cada x tiempo
-
-job.stop();
 
 /*
     POST para crear un archivo de logs
@@ -119,7 +89,7 @@ app.post('/ver_acciones',(req, res) =>{
     globales.lanzarPeticion(ver_acciones, req, res)
 });
 
-lanzarAcciones.lanzaAcciones()
+//lanzarAcciones.lanzaAcciones()
 
 /*
         -------------------------Cerrar Sesion de Usuario-------------------------
@@ -131,3 +101,32 @@ app.post('/cerrar_sesion', (req, res) => {
     globales.lanzarPeticion(cerrar_sesion, req, res)
 });
 
+
+const job = cron.schedule('1 * * * * *',()=>{
+    globales.msg("hola cada 1'");
+
+    /*let res_anterior = []
+    logs({desde:"2022-05-17", hasta:"2022-05-20"}).then((x)=>{
+        globales.msg(x)
+        let res = x
+        if(res_anterior!=res){
+            res = res_anterior
+            globales.msg("mandando mensaje desde index")
+            r = bot()
+        }else{
+            globales.msg("no hay novedades")
+    }
+})**/
+    /*globales.msg("-----------------------------")
+
+    globales.msg('Mandando correo')
+    mandar_correo()*/
+},{
+    scheduled: false
+});
+
+job.start();
+
+//! -------------------------------------
+globales.msg("Servidor ok");
+//! -------------------------------------
