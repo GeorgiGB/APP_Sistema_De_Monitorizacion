@@ -115,7 +115,7 @@ cron.schedule('*****', () => {
 
 Cada "*" representa los meses, dias, horas, minutos y segundos
 
-```
+```md
 # |-----------  segundos (opcional)
 
 # | |---------  minutos (0-59)
