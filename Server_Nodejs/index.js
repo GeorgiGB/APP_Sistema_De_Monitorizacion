@@ -34,7 +34,7 @@ const usuarios_mensajeria = require('./comandos/ver_usuarios_mensajeria');
 const logs = require('./comandos/ver_logs');
 
 //  Llamada del bot de Telegram
-const bot = require('./bots/bot_telegram');
+//const bot = require('./bots/bot_telegram');
 
 //  Llamada del bot de Correo electrónico
 const mandar_correo = require('./bots/bot_manda_correos');
@@ -49,7 +49,7 @@ const lanzarAcciones = require('./comandos/lanzar_accion')
 let app = express();
 app.set('accesTokenSecret', verificar.llaveSecreta);
 
-const acciones = require('./comandos/acciones');
+//const acciones = require('./comandos/acciones');
 
 
 //! Configuración de cors
@@ -111,7 +111,7 @@ app.post('/cerrar_sesion', (req, res) => {
 const job = cron.schedule('0 */5 * * * *',()=>{
     globales.msg("hola cada 5'");
 
-    /*let res_anterior = []
+    let res_anterior = []
     logs({desde:"2022-05-17", hasta:"2022-05-20"}).then((x)=>{
         globales.msg(x)
         let res = x
@@ -122,19 +122,21 @@ const job = cron.schedule('0 */5 * * * *',()=>{
         }else{
             globales.msg("no hay novedades")
     }
-})**/
-    /*globales.msg("-----------------------------")
+})
+    globales.msg("-----------------------------")
 
     globales.msg('Mandando correo')
-    mandar_correo()*/
+    mandar_correo()
 },{
     scheduled: false
 });
 
 job.start();
 
-acciones.inicializaAcciones();
+//acciones.inicializaAcciones();
 
 //! -------------------------------------
 globales.msg("Servidor ok");
 //! -------------------------------------
+
+//bot(); //BOT DE TELEGRAM INICIALIZADO
