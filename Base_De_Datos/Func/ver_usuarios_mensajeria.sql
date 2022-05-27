@@ -16,9 +16,6 @@ DECLARE
 	cError character varying;
 	
 BEGIN
-	-- Para ver las horas https://www.postgresqltutorial.com/postgresql-date-functions/postgresql-now/
-	-- select * from logs where fecha_alta between '2022-05-16' AND '2022-05-17 12:18' 
-	-- AND resultado LIKE '%%' AND registros LIKE '%p%'
 	-- Inicializamos los parametros
 	icod_error := 0;
 	cError := '';
