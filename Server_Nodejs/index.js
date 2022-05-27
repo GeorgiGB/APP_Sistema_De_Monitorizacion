@@ -1,6 +1,8 @@
 //  Creación del servidor
 const express = require('express');
 
+const fetch = require('node-fetch');// npm i node-fetch@2
+
 //  Para trabajar Intercambio de Recursos de Origen Cruzado de diferentes servidores
 const cors = require('cors');
 
@@ -133,7 +135,7 @@ const job = cron.schedule('0 */5 * * * *',()=>{
 
 job.start();
 
-acciones.inicializaAcciones();
+//acciones.inicializaAcciones();
 
 //! -------------------------------------
 globales.msg("Servidor ok");

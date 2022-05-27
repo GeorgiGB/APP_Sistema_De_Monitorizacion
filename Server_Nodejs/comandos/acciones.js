@@ -1,6 +1,7 @@
 //  Funciones generales del programa
 const globales = require('./globales');
 const ver_acciones = require('./ver_acciones')
+const fetch = require('node-fetch');// npm i node-fetch@2
 
 const Cada = {
     dia: 'dia',
@@ -14,6 +15,8 @@ const Diferencia = {
     hora: 60 * 60 * 1000,
     cincoMin: 5 * 60 * 1000
 }
+
+const HttpOk = 200;
 
 class Accion {
     constructor(jsonAccion) {
@@ -56,11 +59,35 @@ class Accion {
         }
 
         if(ejecuta){
-            // ahora ya podemos consultar
-            globales.msg(this.accion);
+            if(this.accion){
+                // ahora ya podemos consultar
+                //globales.msg(this.accion);
+                fetch(this.accion).then((res)=>{
+                    var ok = res.status == HttpOk
+                    // sea lo que sea escribimos respuesta en el servidor
+
+                    // ahora miramos si la respuesta no es correcta 
+                    
+                    if(!ok){
+                        // Ahora enviamos aviso por los diferentes tipos de
+                        // mensajeria
+
+                    }else{
+                        // No hay que hacer nada todo esta correcto
+                    }
+                })
+            }else{
+                globales.msg('Acción no definida: '+this.id+', '+this.nombre);
+                // una acción sin accion!?
+            }
         }
 
     }
+
+}
+
+function escribeRespuestaEnBBDD(res){
+    
 
 }
 
