@@ -2,9 +2,7 @@
 const conexion = require('../config/conexion_bd.js');
 var nodemailer = require('nodemailer');
 var globales = require('../comandos/globales');
-const profile = require('../usuario.json')
-
-const log = require('../logs.json')
+const profile = require('../usuarios_mensajeria.json')
 const notificacion = require('./notificacion')
 
 async function mandarCorreo(){
@@ -25,7 +23,7 @@ var transporter = nodemailer.createTransport({
 //  Cuerpo del mensaje enviante
 var mailOptions = {
     from: profile.user,// Recoge el usuario escrito en el archivo json
-    to: res[1].correo,//  Se lo manda a la/s personas que esten en el listado de correos
+    to: res[1].correo,//  Se lo manda a la/s personas que esten en el listado de correos !CAMBIAR
     subject://  Si no hay un titulo de asunto mandaremos un mensaje predeterminado
     log[1]&&log[1].nombre? 
                   log[1].nombre
@@ -45,8 +43,6 @@ transporter.sendMail(mailOptions, function(error, info){
       globales.msg('Email enviado: ' + info.response);
     }
     transporter.close();
-  }).then(()=>{
-    //FUNCION PARA ACTUALIZAR LA TABLA DE CORREOS LOG ENVIADO
   });
 globales.msg("mensaje enviado "+ mailOptions)
 }

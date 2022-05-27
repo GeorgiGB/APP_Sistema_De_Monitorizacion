@@ -19,16 +19,15 @@ const cerrar_sesion = require('./comandos/cerrar_sesion');
 const globales = require('./comandos/globales');
 
 globales.crearJSon('logs', '[{}]');
-globales.crearJSon('usuario', '[{}]');
 
 //! TODO rehacer la función de ver_usuarios_telegram
 //! por ver usuarios_mensajeria
 // Llamada a los usuarios de telegram
-const ust = require('./comandos/ver_usuarios_telegram');
+const usuarios_mensajeria = require('./comandos/ver_usuarios_mensajeria');
 
 //! De momento esta llamada se comenta
 // Inicializamos los usuarios de telegram
-// ust()
+//usuarios_mensajeria()
 
 
 //  Llamada del comando logs para registrar un archivos de logs.json
@@ -67,8 +66,8 @@ app.post('/login', (req, res) => {
 });
 
 
-app.post('/ver_ust', (req, res) => {
-    globales.lanzarPeticion(ust, req, res)
+app.post('/ver_usuarios_mensajeria', (req, res) => {
+    globales.lanzarPeticion(usuarios_mensajeria, req, res)
 });
 
 
