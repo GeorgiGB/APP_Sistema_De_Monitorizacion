@@ -9,6 +9,11 @@ const Cada = {
     cincoMin: 'cinco_min'
     };
 
+const Estados ={
+    ok: 'ok',
+    ko: 'ko'
+}
+
 const Diferencia = {
     // dia - hora - min - seg - milis
     dia: 24 * 60 * 60 * 1000,
@@ -62,12 +67,20 @@ class Accion {
             if(this.accion){
                 // ahora ya podemos consultar
                 //globales.msg(this.accion);
-                fetch(this.accion).then((res)=>{
+                fetch(/*/'https://jsonplaceholder.typicode.com/todos/--p1'/*/this.accion+'qqq'/**/)
+                    .then(checkStatus)
+                        .then((res)=>{
                     var ok = res.status == HttpOk
-                    // sea lo que sea escribimos respuesta en el servidor
 
-                    // ahora miramos si la respuesta no es correcta 
-                    
+                    // sea lo que sea escribimos respuesta en el servidor
+                    //escribeRespuestaEnBBDD(this.id, res);
+                    //globales.msg(res.headers);
+                    globales.msg(res.status);
+                    res.json().then((f)=>{
+                        globales.msg(f)
+                    })
+
+                    // ahora miramos si la respuesta no es correcta
                     if(!ok){
                         // Ahora enviamos aviso por los diferentes tipos de
                         // mensajeria
@@ -86,9 +99,14 @@ class Accion {
 
 }
 
-function escribeRespuestaEnBBDD(res){
-    
-
+function escribeRespuestaEnBBDD(id, res){
+    var ok = res.status==200;
+    var resultado = {id:id, estado:'', descripcion:''}
+    resultado.estado = ok? Estados.ok:Estados.ko
+    resultado.descripcion = ok? '':'';
+    globales.msg(res);
+    //! TODO por desarrollar
+    //throw new Error("función por desarrollar -> escribeRespuestaEnBBDD");
 }
 
 async function inicializaAcciones(){
@@ -106,6 +124,17 @@ async function inicializaAcciones(){
 
 }
 
+function checkStatus(res) {
+    if (res.ok) { // res.status >= 200 && res.status < 300
+        return res;
+    } else {
+        throw new Error(res.statusText);
+    }
+}
+
+
+function inicia(){
+
 inicializaAcciones().then((acciones) =>{
     acciones.forEach(accion => {
         //globales.msg(accion)
@@ -114,10 +143,10 @@ inicializaAcciones().then((acciones) =>{
     //globales.msg(acciones);
 });
 
-
+}
 
 module.exports = {
-    inicializaAcciones:inicializaAcciones,
+    inicia:inicia,
     /*peticiones:peticiones,
     lanzarPeticion:lanzarPeticion,
     crearJSon:crearJSon*/

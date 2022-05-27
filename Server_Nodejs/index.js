@@ -36,7 +36,7 @@ const usuarios_mensajeria = require('./comandos/ver_usuarios_mensajeria');
 const logs = require('./comandos/ver_logs');
 
 //  Llamada del bot de Telegram
-//const bot = require('./bots/bot_telegram');
+const bot = require('./bots/bot_telegram');
 
 //  Llamada del bot de Correo electrónico
 const mandar_correo = require('./bots/bot_manda_correos');
@@ -51,7 +51,7 @@ const lanzarAcciones = require('./comandos/lanzar_accion')
 let app = express();
 app.set('accesTokenSecret', verificar.llaveSecreta);
 
-//const acciones = require('./comandos/acciones');
+const acciones = require('./comandos/acciones');
 
 
 //! Configuración de cors
@@ -133,9 +133,9 @@ const job = cron.schedule('0 */5 * * * *',()=>{
     scheduled: false
 });
 
-job.start();
+//job.start();
 
-//acciones.inicializaAcciones();
+acciones.inicia();
 
 //! -------------------------------------
 globales.msg("Servidor ok");
