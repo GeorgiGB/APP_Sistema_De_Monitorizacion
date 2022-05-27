@@ -1,38 +1,40 @@
-//  Usar el paquete
-const conexion = require('../config/conexion_bd.js');
-var nodemailer = require('nodemailer');
+const conexion = require('../config/conexion_bd.js');//Conexion con la bd
+var nodemailer = require('nodemailer');//NPM para mandar correos
 var globales = require('../comandos/globales');
-const profile = require('../usuarios_mensajeria.json')
-const notificacion = require('./notificacion')
+const usuarios_mensajeria = require('../usuarios_mensajeria.json');//Mirar los correos
+const notificacion = require('./notificacion');// Mensaje de error
+const user = require('../usuario.json');//  Parametros del mandador
 
 async function mandarCorreo(){
-//  Petición al servidor para obtener los correos
-let res_correos = await conexion.query("SELECT * FROM mirar_correos()")
-
-var res = res_correos.rows[0].jresultado
-
 //Creamos el objeto de que mandara el correo y elegiremos el servicio que queramos
 var transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: profile.user,
-    pass: profile.pass
+    user: user.user,
+    pass: user.pass
   }
 })
+var usu_correos = usuarios_mensajeria.slice(1);
+
+for (const key in usu_correos) {
+  var correo = usu_correos[key].email;
+  globales.msg(JSON.stringify(correo))
+}
 
 //  Cuerpo del mensaje enviante
 var mailOptions = {
-    from: profile.user,// Recoge el usuario escrito en el archivo json
-    to: res[1].correo,//  Se lo manda a la/s personas que esten en el listado de correos !CAMBIAR
+    from: user.user,// Recoge el usuario escrito en el archivo json
+    to: correo,//  Se lo manda a la/s personas que esten en el listado de correos !CAMBIAR
     subject://  Si no hay un titulo de asunto mandaremos un mensaje predeterminado
-    log[1]&&log[1].nombre? 
-                  log[1].nombre
+    notificacion[1]&&notificacion[1].acc_nombre? 
+    notificacion[1].acc_nombre
                   :
                   'No hay mensajes',// El asunto sera el nombre del error del servidor
-    text: notificacion()// El mensaje sera toda la estructura del error
+    text: notificacion// El mensaje sera toda la estructura del error
 };
 
 //  Comando para mandar el correo junto con mailOptions
+
 transporter.sendMail(mailOptions, function(error, info){
     globales.msg("CORREO ENVIADO: ")
     globales.msg(mailOptions)
@@ -45,6 +47,7 @@ transporter.sendMail(mailOptions, function(error, info){
     transporter.close();
   });
 globales.msg("mensaje enviado "+ mailOptions)
+
 }
 
 module.exports = mandarCorreo;

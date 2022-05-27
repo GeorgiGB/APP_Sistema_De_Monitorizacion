@@ -21,7 +21,7 @@ async function ver_usuarios_mensajeria(){
     //  Creación de un nuevo archivo en el que se guardaran los ver_usuarios_mensajeria
     globales.crearJSon('usuarios_mensajeria',JSON.stringify(usuarios))
     
-    globales.msg(lista_mensajeria)
+    //globales.msg(lista_mensajeria)
 
     return lista_mensajeria;
 }
