@@ -50,6 +50,8 @@ const lanzarAcciones = require('./comandos/lanzar_accion')
 let app = express();
 app.set('accesTokenSecret', verificar.llaveSecreta);
 
+const acciones = require('./comandos/acciones');
+
 
 //! Configuración de cors
 var corsOptions = require("./config/cors.config")
@@ -107,7 +109,7 @@ app.post('/cerrar_sesion', (req, res) => {
     globales.lanzarPeticion(cerrar_sesion, req, res)
 });
 
-const job = cron.schedule('*/5 * * * *',()=>{
+const job = cron.schedule('0 */5 * * * *',()=>{
     globales.msg("hola cada 5'");
 
     /*let res_anterior = []
@@ -132,7 +134,7 @@ const job = cron.schedule('*/5 * * * *',()=>{
 
 job.start();
 
-ver_acciones({"desde":"2020-01-01"});
+acciones.inicializaAcciones();
 
 //! -------------------------------------
 globales.msg("Servidor ok");
