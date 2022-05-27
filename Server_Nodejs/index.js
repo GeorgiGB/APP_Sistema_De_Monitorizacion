@@ -15,6 +15,12 @@ const verificar = require('./comandos/login');
 //  Cambiara el estado del token del usuario
 const cerrar_sesion = require('./comandos/cerrar_sesion');
 
+//  Funciones generales del programa
+const globales = require('./comandos/globales');
+
+globales.crearJSon('logs', '[{}]');
+globales.crearJSon('usuario', '[{}]');
+
 //! TODO rehacer la función de ver_usuarios_telegram
 //! por ver usuarios_mensajeria
 // Llamada a los usuarios de telegram
@@ -24,11 +30,15 @@ const ust = require('./comandos/ver_usuarios_telegram');
 // Inicializamos los usuarios de telegram
 // ust()
 
+
 //  Llamada del comando logs para registrar un archivos de logs.json
 const logs = require('./comandos/ver_logs');
 
 //  Llamada del bot de Telegram
 const bot = require('./bots/bot_telegram');
+
+//  Llamada del bot de Correo electrónico
+const mandar_correo = require('./bots/bot_manda_correos');
 
 //  Ver las acciones del servidor
 const ver_acciones = require('./comandos/ver_acciones')
@@ -36,8 +46,6 @@ const ver_acciones = require('./comandos/ver_acciones')
 //  Automatiza las acciones de la tabla
 const lanzarAcciones = require('./comandos/lanzar_accion')
 
-//  Funciones generales del programa
-const globales = require('./comandos/globales');
 
 let app = express();
 app.set('accesTokenSecret', verificar.llaveSecreta);
@@ -65,8 +73,6 @@ app.post('/ver_ust', (req, res) => {
 
 
 
-
-const mandar_correo = require('./bots/bot_manda_correos');
 
 app.post('/mandar_correo', (req, res) => {
     globales.lanzarPeticion(mandar_correo, req, res)
@@ -101,9 +107,8 @@ app.post('/cerrar_sesion', (req, res) => {
     globales.lanzarPeticion(cerrar_sesion, req, res)
 });
 
-
-const job = cron.schedule('1 * * * * *',()=>{
-    globales.msg("hola cada 1'");
+const job = cron.schedule('*/5 * * * *',()=>{
+    globales.msg("hola cada 5'");
 
     /*let res_anterior = []
     logs({desde:"2022-05-17", hasta:"2022-05-20"}).then((x)=>{
@@ -126,6 +131,8 @@ const job = cron.schedule('1 * * * * *',()=>{
 });
 
 job.start();
+
+ver_acciones({"desde":"2020-01-01"});
 
 //! -------------------------------------
 globales.msg("Servidor ok");
