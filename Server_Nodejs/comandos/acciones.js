@@ -186,5 +186,6 @@ function ejecuta(siguiente){
 }
 
 module.exports = {
-    ejecuta:ejecuta
+    ejecuta:ejecuta,
+    Estados:Estados
 }

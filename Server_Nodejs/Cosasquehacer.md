@@ -72,8 +72,8 @@ const TelegramBot = require('node-telegram-bot-api');
 var globales = require('../comandos/globales')
 const tokenBot = require('./tokenBot.json')
 const notificacion = require('./notificacion')
-globales.crearJSon('ver_usuarios_mensajeria','[{}]')
-const ust = require('../ver_usuarios_mensajeria.json')
+globales.crearJSon('usuarios_mensajeria','[{}]')
+const ust = require('../usuarios_mensajeria.json')
 
 async function botTelegram(){
 //  Token del bot

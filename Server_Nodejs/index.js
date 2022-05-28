@@ -25,7 +25,7 @@ globales.crearJSon('logs', '[{}]');
 //! TODO rehacer la función de ver_usuarios_telegram
 //! por ver usuarios_mensajeria
 // Llamada a los usuarios de telegram
-const usuarios_mensajeria = require('./comandos/ver_usuarios_mensajeria');
+const usuarios_mensajeria = require('./comandos/usuarios_mensajeria');
 
 //! De momento esta llamada se comenta
 // Inicializamos los usuarios de telegram
@@ -51,8 +51,9 @@ const lanzarAcciones = require('./comandos/lanzar_accion')
 let app = express();
 app.set('accesTokenSecret', verificar.llaveSecreta);
 
-const acciones = require('./comandos/acciones');
 
+const acciones = require('./comandos/acciones');
+const mensajeria = require('./comandos/mensajeria');
 
 //! Configuración de cors
 var corsOptions = require("./config/cors.config")
@@ -70,7 +71,7 @@ app.post('/login', (req, res) => {
 });
 
 
-app.post('/ver_usuarios_mensajeria', (req, res) => {
+app.post('/usuarios_mensajeria', (req, res) => {
     globales.lanzarPeticion(usuarios_mensajeria, req, res)
 });
 
@@ -139,12 +140,14 @@ const job = cron.schedule('0 */5 * * * *',()=>{
     scheduled: false
 });
 
-job.start();
+//job.start();
 
 
-acciones.ejecuta(()=>{
+/*acciones.ejecuta(()=>{
     globales.msg('Las acciones han finalizado');
-});
+});*/
+
+mensajeria.envia();
 
 //! -------------------------------------
 globales.msg("Servidor ok");

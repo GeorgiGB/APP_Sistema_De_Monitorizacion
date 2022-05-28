@@ -54,7 +54,7 @@ BEGIN
 					ELSE
 					j.hasta
 					END
-			AND l.lg_registros LIKE '%'||cBusca||'%'
+			AND l.lg_descripcion LIKE '%'||cBusca||'%'
 			AND
 				CASE
 					WHEN j.estado is null THEN
