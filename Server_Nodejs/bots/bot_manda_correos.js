@@ -1,4 +1,4 @@
-const conexion = require('../config/conexion_bd.js');//Conexion con la bd
+const conexion = require('../config/db.config.js');//Conexion con la bd
 var nodemailer = require('nodemailer');//NPM para mandar correos
 var globales = require('../comandos/globales');
 const usuarios_mensajeria = require('../usuarios_mensajeria.json');//Mirar los correos

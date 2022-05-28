@@ -1,4 +1,4 @@
-const conexion = require('../config/conexion_bd.js');
+const conexion = require('../config/db.config.js');
 const globales = require('./globales');
 
   /*

@@ -1,7 +1,9 @@
 //  Funciones generales del programa
 const globales = require('./globales');
-const ver_acciones = require('./ver_acciones')
 const fetch = require('node-fetch');// npm i node-fetch@2
+const ver_acciones = require('./ver_acciones');
+const inserta_log = require('./inserta_log');
+const { msg } = require('./globales');
 
 const Cada = {
     dia: 'dia',
@@ -12,20 +14,24 @@ const Cada = {
 const Estados ={
     ok: 'ok',
     ko: 'ko'
-}
+};
 
 const Diferencia = {
     // dia - hora - min - seg - milis
     dia: 24 * 60 * 60 * 1000,
     hora: 60 * 60 * 1000,
     cincoMin: 5 * 60 * 1000
-}
+};
+
+const ContentType = {
+    textHtml: 'text/html',
+    json:'application/json'
+};
 
 const HttpOk = 200;
 
 class Accion {
     constructor(jsonAccion) {
-        //globales.msg(jsonAccion);
         this.id = jsonAccion.acc_id_acciones;
         this.nombre = jsonAccion.acc_nombre;
         this.servicio = jsonAccion.acc_tservicio;
@@ -33,29 +39,33 @@ class Accion {
         this.accion = jsonAccion.acc_accion;
         this.descripcion = jsonAccion.acc_descripcion;
         this.alta = Date.parse(jsonAccion.acc_fecha_alta);
-        this.ultUso = jsonAccion.acc_ult_uso;
+        this.ultUso = jsonAccion.acc_fecha_ult_uso;
         this.cada = jsonAccion.acc_cada;
+        this.estado = Estados.ko;
+        this.resultado;
 
-        // inicializamos el último uso si no esta a valor 0
+        // inicializamos el último uso si no tiene valor lo ponemos a 0
         this.ultUso = !this.ultUso?
-                        new Date(0): Date.parse(this.ultUso);
-        
+                new Date(0): new Date(Date.parse(this.ultUso)); //Devuelve mili segundos
     }
 
-    inicia(){
+    async inicia(){
         var tiempoTranscurrido = (new Date()).getTime() - this.ultUso.getTime();
         var ejecuta = false;
         switch(this.cada){
             case(Cada.dia):
                 ejecuta = tiempoTranscurrido > Diferencia.dia;
+                //globales.msg('dia: '+tiempoTranscurrido+' > '+Diferencia.dia)
                 break;
 
             case(Cada.hora):
                 ejecuta = tiempoTranscurrido > Diferencia.hora;
+                //globales.msg('hora: '+tiempoTranscurrido+' > '+Diferencia.hora)
                 break;
 
             case(Cada.cincoMin):
                 ejecuta = tiempoTranscurrido > Diferencia.cincoMin;
+                //globales.msg('cinco_min: '+tiempoTranscurrido+' > '+Diferencia.cincoMin)
                 break;
 
             default:
@@ -63,53 +73,38 @@ class Accion {
                 // avisamos?
         }
 
+
         if(ejecuta){
             if(this.accion){
                 // ahora ya podemos consultar
-                //globales.msg(this.accion);
-                fetch(/*/'https://jsonplaceholder.typicode.com/todos/--p1'/*/this.accion+'qqq'/**/)
-                    .then(checkStatus)
-                        .then((res)=>{
-                    var ok = res.status == HttpOk
+                var res = await fetch(this.accion);
 
-                    // sea lo que sea escribimos respuesta en el servidor
-                    //escribeRespuestaEnBBDD(this.id, res);
-                    //globales.msg(res.headers);
-                    globales.msg(res.status);
-                    res.json().then((f)=>{
-                        globales.msg(f)
-                    })
-
-                    // ahora miramos si la respuesta no es correcta
-                    if(!ok){
-                        // Ahora enviamos aviso por los diferentes tipos de
-                        // mensajeria
-
-                    }else{
-                        // No hay que hacer nada todo esta correcto
-                    }
-                })
+                // y guardar la respuesta
+                this.guardaDatosRespuesta(res);
             }else{
-                globales.msg('Acción no definida: '+this.id+', '+this.nombre);
+                // globales.msg('Acción no definida: '+this.id+', '+this.nombre);
                 // una acción sin accion!?
             }
         }
 
     }
 
+    
+    guardaDatosRespuesta(res){
+        this.estado = res.status >= 200 && res.status < 300?
+            Estados.ok : Estados.ko;
+
+        this.resultado = {
+            accion:this.id,
+            estado:this.estado,
+            descripcion:res.status
+        };
+    }
+
 }
 
-function escribeRespuestaEnBBDD(id, res){
-    var ok = res.status==200;
-    var resultado = {id:id, estado:'', descripcion:''}
-    resultado.estado = ok? Estados.ok:Estados.ko
-    resultado.descripcion = ok? '':'';
-    globales.msg(res);
-    //! TODO por desarrollar
-    //throw new Error("función por desarrollar -> escribeRespuestaEnBBDD");
-}
 
-async function inicializaAcciones(){
+async function cargaAcciones(){
     var res = await ver_acciones({"desde":"2020-01-01"});
     let error = res[0].cod_error;
     let acciones = [];
@@ -124,25 +119,36 @@ async function inicializaAcciones(){
 
 }
 
-function checkStatus(res) {
-    if (res.ok) { // res.status >= 200 && res.status < 300
-        return res;
-    } else {
-        throw new Error(res.statusText);
-    }
-}
-
 
 function inicia(){
 
-inicializaAcciones().then((acciones) =>{
-    acciones.forEach(accion => {
-        //globales.msg(accion)
-        accion.inicia();
-    });
-    //globales.msg(acciones);
-});
+    cargaAcciones().then((acciones) =>{
 
+        acciones.forEach(accion => {
+            //globales.msg(accion)
+            accion.inicia().then(()=>{
+                guardaResultado(accion)
+            });
+        });
+    });
+
+}
+
+function guardaResultado(accion){
+    if(accion.resultado){
+        // insertamos el log en la BBDD
+        inserta_log([accion.resultado]).then((res)=>{
+            // Una vez llega la respuesta de la BBDD
+            // ya podemos enviar el aviso si el resultado ha sido ko
+            
+            globales.msg('guardo resultado');
+        });
+    }else{
+        if(!accion.accion){
+            // una acción sin accion!?
+            globales.msg('Acción no definida: '+accion.id+', '+accion.nombre);
+        }
+    }
 }
 
 module.exports = {
