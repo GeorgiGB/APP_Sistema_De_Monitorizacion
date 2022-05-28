@@ -2,5 +2,5 @@
 /node_modules
 package-lock.json
 */db.config.js
-*/config_correo.js
+*/config_correo.json
 registroLogs.txt
