@@ -4,6 +4,7 @@ const fetch = require('node-fetch');// npm i node-fetch@2
 const ver_acciones = require('./ver_acciones');
 const inserta_log = require('./inserta_log');
 const { msg } = require('./globales');
+const { FetchError } = require('node-fetch');
 
 const Cada = {
     dia: 'dia',
@@ -41,7 +42,6 @@ class Accion {
         this.alta = Date.parse(jsonAccion.acc_fecha_alta);
         this.ultUso = jsonAccion.acc_fecha_ult_uso;
         this.cada = jsonAccion.acc_cada;
-        this.estado = Estados.ko;
         this.resultado;
 
         // inicializamos el último uso si no tiene valor lo ponemos a 0
@@ -77,10 +77,20 @@ class Accion {
         if(ejecuta){
             if(this.accion){
                 // ahora ya podemos consultar
-                var res = await fetch(this.accion);
-
-                // y guardar la respuesta
-                this.guardaDatosRespuesta(res);
+                return fetch(this.accion).then((res) =>{
+                    this.guardaDatosRespuesta(res);
+                    return;
+                }).catch((errorBusqueda)=>{
+                    // si estamos aquí es porque ha habido
+                    // un error en la dirección web u otro
+                    // lanzado por el módulo "node-fetch"
+                    this.resultado = {
+                        accion:this.id,
+                        estado: Estados.ko,
+                        descripcion:errorBusqueda.toString()
+                    };
+                    return;
+                });
             }else{
                 // globales.msg('Acción no definida: '+this.id+', '+this.nombre);
                 // una acción sin accion!?
@@ -91,12 +101,12 @@ class Accion {
 
     
     guardaDatosRespuesta(res){
-        this.estado = res.status >= 200 && res.status < 300?
-            Estados.ok : Estados.ko;
 
         this.resultado = {
             accion:this.id,
-            estado:this.estado,
+            estado:
+                res.status >= 200 && res.status < 300?
+                    Estados.ok : Estados.ko,
             descripcion:res.status
         };
     }
@@ -119,41 +129,62 @@ async function cargaAcciones(){
 
 }
 
+async function guardaResultado(accion){
+    if(accion.resultado){
+        // insertamos el log en la BBDD
+        return inserta_log([accion.resultado]).then((res)=>{
+            return res;
+        });
+    }else{
+        if(!accion.accion){
+            // una acción sin accion!?
+            // Tenemos una acción no definida en la BBDD
+            //! TODO crear el envío a los usuarios
+            //! administradores 
+            globales.msg('Acción no definida: '+accion.id+', '+accion.nombre);
+        }
+    }
+    return false
+}
 
-function inicia(){
 
+function ejecuta(siguiente){
     cargaAcciones().then((acciones) =>{
-
-        acciones.forEach(accion => {
-            //globales.msg(accion)
-            accion.inicia().then(()=>{
-                guardaResultado(accion)
+        var total = acciones.length;
+        acciones.forEach((accion, i) => {
+            globales.msg(i);
+            accion.inicia().then(async ()=>{
+                const res = await guardaResultado(accion);
+                // Acciones ya ha finalizado su trabajo
+                // No envía ningún mensaje
+                // Los mensajes los envia Mensajeria
+                globales.msg(i);
+                if (res) {
+                    globales.msg(res);
+                    // A no ser que
+                    var error = res[0].cod_error;
+                    if (error != '0') {
+                    }
+                }
+                return i;
+            }).then((x)=>{
+                globales.msg('acaba: '+x+', '+total);
+            }).catch((e)=>{
+                //! TODO crear el envío a los usuarios
+                //! administradores 
+                msg(accion.resultado)
+            }).finally(()=>{
+                total--;
+                globales.msg('Finaliza: '+i+": "+total);
+                if(total<=0){
+                    siguiente();
+                }
             });
         });
     });
 
 }
 
-function guardaResultado(accion){
-    if(accion.resultado){
-        // insertamos el log en la BBDD
-        inserta_log([accion.resultado]).then((res)=>{
-            // Una vez llega la respuesta de la BBDD
-            // ya podemos enviar el aviso si el resultado ha sido ko
-            
-            globales.msg('guardo resultado');
-        });
-    }else{
-        if(!accion.accion){
-            // una acción sin accion!?
-            globales.msg('Acción no definida: '+accion.id+', '+accion.nombre);
-        }
-    }
-}
-
 module.exports = {
-    inicia:inicia,
-    /*peticiones:peticiones,
-    lanzarPeticion:lanzarPeticion,
-    crearJSon:crearJSon*/
+    ejecuta:ejecuta
 }

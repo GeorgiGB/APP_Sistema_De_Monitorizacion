@@ -113,29 +113,38 @@ app.post('/cerrar_sesion', (req, res) => {
 const job = cron.schedule('0 */5 * * * *',()=>{
     globales.msg("hola cada 5'");
 
+    acciones.ejecuta(()=>{
+        globales.msg('Las acciones han finalizado');
+    });
+
+    /*
     let res_anterior = []
-    logs({desde:"2022-05-17", hasta:"2022-05-20"}).then((x)=>{
-        globales.msg(x)
-        let res = x
-        if(res_anterior!=res){
-            res = res_anterior
-            globales.msg("mandando mensaje desde index")
-            r = bot()
-        }else{
-            globales.msg("no hay novedades")
-    }
-})
+    logs({desde:"2022-05-17", hasta:"2022-05-20"})
+        .then((x)=>{
+            globales.msg(x)
+            let res = x
+            if(res_anterior!=res){
+                res = res_anterior
+                globales.msg("mandando mensaje desde index")
+                r = bot()
+            }else{
+                globales.msg("no hay novedades")
+            }
+        })
     globales.msg("-----------------------------")
 
     globales.msg('Mandando correo')
-    mandar_correo()
+    mandar_correo()*/
 },{
     scheduled: false
 });
 
-//job.start();
+job.start();
 
-acciones.inicia();
+
+acciones.ejecuta(()=>{
+    globales.msg('Las acciones han finalizado');
+});
 
 //! -------------------------------------
 globales.msg("Servidor ok");
