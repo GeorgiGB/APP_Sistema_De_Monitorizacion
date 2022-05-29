@@ -285,6 +285,8 @@ function mandaCorreos(mensaje, usuarios, log, alFinalizar){
         }
     }
 
+    globales.msg(mailList);
+
     if(mailList.length==0){
         return mailList;
     }
@@ -400,5 +402,8 @@ Mensajerias[TipusMensajeria.email]=mandaCorreos;
 Mensajerias[TipusMensajeria.telegram]=botTelegram;
 
 module.exports = {
-    envia:envia
+    envia:envia,
+    TipusMensajeria:TipusMensajeria,
+    estructuraMensaje:estructuraMensaje,
+    enviaEmailUsuarios:enviaEmailUsuarios
 }

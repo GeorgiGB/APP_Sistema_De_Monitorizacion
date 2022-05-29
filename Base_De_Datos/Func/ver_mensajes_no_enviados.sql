@@ -24,7 +24,7 @@ BEGIN
 			
 	SELECT to_json(array_agg(operacion)) FROM
 	    (SELECT men_cod, men_sin_enviar,
-            lg_cod, lg_descripcion, lg_fecha_alta, lg_fecha_envio,
+            lg_cod, lg_acc_cod, lg_descripcion, lg_fecha_alta, lg_fecha_envio,
             usm_cod cod, usm_usuario usuario, usm_mensajeria mensajeria, 
             acc_nombre, acc_descripcion, acc_accion
         FROM mensajes_no_enviados, logs, usuarios_mensajeria, acciones

@@ -54,6 +54,7 @@ app.set('accesTokenSecret', verificar.llaveSecreta);
 
 const acciones = require('./comandos/acciones');
 const mensajeria = require('./comandos/mensajeria');
+const enviaNoEnviados = require('./comandos/mensajeria_no_enviada.js');
 
 //! Configuración de cors
 var corsOptions = require("./config/cors.config")
@@ -147,7 +148,9 @@ const job = cron.schedule('0 */5 * * * *',()=>{
     globales.msg('Las acciones han finalizado');
 });*/
 
-mensajeria.envia();
+//mensajeria.envia();
+
+enviaNoEnviados.envia();
 
 //! -------------------------------------
 globales.msg("Servidor ok");
