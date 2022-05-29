@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS public.mensajes_no_enviados
     men_sin_enviar t_envios[],
     CONSTRAINT mensajes_no_enviados_pkey PRIMARY KEY (men_cod),
     CONSTRAINT fk_mensajes_no_enviados_logs FOREIGN KEY (men_log_cod)
-        REFERENCES public.logs (lg_id_logs) MATCH SIMPLE
+        REFERENCES public.logs (lg_cod) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT fk_mensajes_no_enviados_usuarios_mensajeria FOREIGN KEY (men_usm_cod)

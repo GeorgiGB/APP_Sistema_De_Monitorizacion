@@ -8,10 +8,10 @@ function notificacion()
     return [
       'Codigo de error: '+log[0].cod_error+
       '\nNombre: '+log[1].acc_nombre+
-      '\nId: '+log[1].lg_id_logs+
+      '\nId: '+log[1].lg_cod+
       '\nRegistro: '+log[1].lg_registros+
       '\nFecha de alta: '+log[1].lg_fecha_alta+
-      '\nNombre de la accion: '+log[1].lg_acciones_id+
+      '\nNombre de la accion: '+log[1].lg_acc_cod+
       '\n-----------------------'+
       '\nResultado: '+log[1].lg_estado+
       '\n-----------------------',

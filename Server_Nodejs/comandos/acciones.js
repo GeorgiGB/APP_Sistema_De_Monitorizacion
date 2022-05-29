@@ -33,7 +33,7 @@ const HttpOk = 200;
 
 class Accion {
     constructor(jsonAccion) {
-        this.id = jsonAccion.acc_id_acciones;
+        this.id = jsonAccion.acc_cod;
         this.nombre = jsonAccion.acc_nombre;
         this.servicio = jsonAccion.acc_tservicio;
         this.usos = jsonAccion.acc_usos;
@@ -115,7 +115,7 @@ class Accion {
 
 
 async function cargaAcciones(){
-    var res = await ver_acciones({"desde":"2020-01-01"});
+    var res = await ver_acciones({});
     let error = res[0].cod_error;
     let acciones = [];
     if(error==='0'){

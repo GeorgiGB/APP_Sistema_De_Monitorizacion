@@ -25,16 +25,16 @@ BEGIN
     dAhora := NOW();
 	
     CREATE TEMP TABLE IF NOT EXISTS json_insert_log as
-    SELECT lg_descripcion as descripcion, lg_acciones_id as accion, lg_estado as estado 
+    SELECT lg_descripcion as descripcion, lg_acc_cod as accion, lg_estado as estado 
         FROM logs WHERE false; -- te devuelve el tipo de record
             
     -- No podemos hacer un select directamente sobre un insert aunque tenga returning
 	-- Por eso, insertamos y con with recogemos el resultado que lo utilizamos
     -- en el último select para guardarlo en jresultado en formato JSON
-	WITH insertat AS ( INSERT INTO logs(lg_descripcion, lg_acciones_id, lg_estado, lg_fecha_alta)
+	WITH insertat AS ( INSERT INTO logs(lg_descripcion, lg_acc_cod, lg_estado, lg_fecha_alta)
 		SELECT j.descripcion, j.accion, j.estado, dAhora
 			FROM jsonb_populate_recordset(null::json_insert_log, jleer) j
-        RETURNING lg_id_logs log_cod, lg_fecha_alta ahora )
+        RETURNING lg_cod log_cod, lg_fecha_alta ahora )
         
     SELECT ('{"cod_error":"' || icod_error ||'"}')::jsonb
             ||to_json(array_agg(operacion))::jsonb
@@ -45,7 +45,7 @@ BEGIN
         FROM 
             jsonb_populate_recordset(null::json_insert_log, jleer) j
         WHERE 
-          acc_id_acciones = j.accion;
+          acc_cod = j.accion;
 	
 	EXCEPTION WHEN OTHERS THEN
 		SELECT excepcion FROM control_excepciones(SQLSTATE, SQLERRM) INTO jresultado;
