@@ -1,6 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api');
 var globales = require('../comandos/globales')
-const tokenBot = require('./tokenBot.json')
+const tokenBot = require('../config/tokenBot.json')
 const notificacion = require('./notificacion')
 const usu_mensajeria = require('../usuarios_mensajeria.json')
 

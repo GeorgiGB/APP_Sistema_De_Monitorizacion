@@ -3,4 +3,5 @@
 package-lock.json
 **/db.config.js
 **/config_correo.json
+**/tokenBot.json
 registroLogs.txt

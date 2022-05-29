@@ -37,7 +37,7 @@ BEGIN
 			WHERE false; -- te devuelve el tipo de record
 			
 	SELECT to_json(array_agg(operacion)) FROM
-	(SELECT l.*, ac.acc_nombre, ac.acc_descripcion FROM logs l,
+	(SELECT l.*, ac.acc_nombre, ac.acc_descripcion, ac.acc_accion FROM logs l,
 	 acciones ac, jsonb_populate_record(null::json_select_log, jleer) j
 		WHERE l.lg_acciones_id = ac.acc_id_acciones
 	 	AND l.lg_fecha_alta BETWEEN
