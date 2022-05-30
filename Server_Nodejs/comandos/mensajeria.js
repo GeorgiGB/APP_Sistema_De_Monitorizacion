@@ -6,10 +6,20 @@ const inserta_log = require('./inserta_log');
 var nodemailer = require('nodemailer');//NPM para mandar correos
 const conexion = require('../config/db.config.js');
 const tokenBot = require('../config/tokenBot.json');
-const usuCorreo = require('../config/correo.json');
-const TelegramBot = require('node-telegram-bot-api');
+const usuCorreo = require('../config/correo.config.json');
+// const TelegramBot = require('node-telegram-bot-api');
 const { Estados } = require('./acciones');
 
+
+
+
+
+const Desde = new Date(0);
+const Mensajerias = {};
+const TipusMensajeria = {
+    email:'email',
+    telegram:'telegram'
+}
 
 
 async function usuarios_mensajeria(){
@@ -80,14 +90,6 @@ function estructuraMensaje(log){
 }
 
 
-
-const Desde = new Date(0);
-const Mensajerias = {};
-const TipusMensajeria = {
-    email:'email',
-    telegram:'telegram'
-}
-
 // imortante para otro tipo de servicios mira en https://nodemailer.com/smtp/well-known/
 // para la configuración completa
 const Service = 'gmail';
@@ -100,25 +102,37 @@ class Rechazado{
         this.usm_cod = usm_cod;
         this.usuario = usuario
         this.razon = razon;
-        this.emparejado = false;
-    }
-
-    mismoLogUsuario(rechazado){
-        return this.log_cod == rechazado.log_cod
-            && this.usm_cod == rechazado.usm_cod;
     }
 }
 
 class Consulta{
 
-    constructor(usm_cod, log_cod, que){
-        this.usuario = usm_cod,
-        this.log_id = log_cod,
-        this.sin_enviar = '{'+que+'}'
+    constructor(usm_cod, log_cod, tipo){
+        this.usuario = usm_cod;
+        this.log_id = log_cod;
+        this.sin_enviar = '{'+tipo+'}';
     }
 
     add(tipo){
         this.sin_enviar = this.sin_enviar.replace('}', ','+tipo+'}');
+    }
+}
+
+class ActualizaNoEnviado{
+
+    constructor(men_cod, tipo){
+        this.men_cod = men_cod;
+        this.sin_enviar = '{'+tipo+'}';
+    }
+
+    add(tipo){
+        this.sin_enviar = this.sin_enviar.replace('}', ','+tipo+'}');
+    }
+}
+
+class EliminaNoEnviado{
+    constructor(men_cod){
+        this.men_cod = men_cod
     }
 }
 
@@ -304,7 +318,7 @@ function mandaCorreos(mensaje, usuarios, log, alFinalizar){
     //  Cuerpo del mensaje enviante
     var mailOptions = {
         from: usuCorreo.user, // Recoge el usuario escrito en el archivo json
-        to: mailList, //  Se lo manda a la/s personas que están en el listado de correos 
+        bcc: mailList, //  Se lo manda a la/s personas que están en el listado de correos 
         subject: log.acc_nombre+': '+log.lg_estado, // El asunto será el nombre la acción 
         text: mensaje// El mensaje sera toda la estructura del error
     };
@@ -373,7 +387,7 @@ function mandaCorreos(mensaje, usuarios, log, alFinalizar){
 const token = tokenBot.token;
 
 // Create a bot that uses 'polling' to fetch new updates
-const bot = new TelegramBot(token, {polling: true});
+// const bot = new TelegramBot(token, {polling: true});
     
 async function botTelegram(mensaje, usuario, log){
 
@@ -404,6 +418,10 @@ Mensajerias[TipusMensajeria.telegram]=botTelegram;
 module.exports = {
     envia:envia,
     TipusMensajeria:TipusMensajeria,
+    Rechazado:Rechazado,
+    Consulta:Consulta,
+    ActualizaNoEnviado:ActualizaNoEnviado,
+    EliminaNoEnviado:EliminaNoEnviado,
     estructuraMensaje:estructuraMensaje,
     enviaEmailUsuarios:enviaEmailUsuarios
 }

@@ -2,6 +2,7 @@
 /node_modules
 package-lock.json
 **/db.config.js
-**/config_correo.json
+**/correo.config.json
 **/tokenBot.json
+**/transporter.config.js
 registroLogs.txt
