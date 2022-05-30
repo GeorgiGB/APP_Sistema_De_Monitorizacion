@@ -1,6 +1,6 @@
 -- FUNCTION: public.elimina_de_mensajes_no_enviados(jsonb)
 
--- DROP FUNCTION IF EXISTS public.elimina_de_mensajes_no_enviados(jsonb);
+DROP FUNCTION IF EXISTS public.elimina_de_mensajes_no_enviados(jsonb);
 
 CREATE OR REPLACE FUNCTION public.elimina_de_mensajes_no_enviados(
 	jleer jsonb,
@@ -14,26 +14,37 @@ AS $BODY$
 DECLARE
 	icod_error integer;
 	cError character varying;
-	iUsm_cod integer;
+	iMen_cod integer;
 	
 BEGIN
 	-- Inicializamos los parametros
-	icod_error := -1;
+	icod_error := 0;
 	cError := '';
     jresultado := '[]';
-	iUsm_cod := -1;
+	iMen_cod := -1;
     
     CREATE TEMP TABLE IF NOT EXISTS json_mensajes_no_enviados as
 		SELECT
+            men_cod as men_cod,
             men_usm_cod as usuario,
             men_log_cod as log_id
         FROM mensajes_no_enviados
         WHERE false; -- te devuelve el tipo de record
+     
+    iMen_cod := (jleer::jsonb#>>'{0,men_cod}')::integer;
+    
+    IF iMen_cod IS NULL THEN
+        DELETE FROM mensajes_no_enviados
+            WHERE (men_usm_cod, men_log_cod)
+                IN (SELECT j.usuario, j.log_id
+                    FROM jsonb_populate_recordset(null::json_mensajes_no_enviados, jleer) j);
+    ELSE
+        DELETE FROM mensajes_no_enviados
+            WHERE (men_cod)
+                IN (SELECT j.men_cod
+                    FROM jsonb_populate_recordset(null::json_mensajes_no_enviados, jleer) j);
+    END IF;
 	
-    DELETE FROM mensajes_no_enviados
-		WHERE (men_usm_cod, men_log_cod)
-			IN (SELECT j.usuario, j.log_id
-				FROM jsonb_populate_recordset(null::json_mensajes_no_enviados, jleer) j);
 	
 	SELECT ('{"cod_error":"' || icod_error ||'"}')::jsonb || jresultado ::jsonb INTO jresultado;
 	

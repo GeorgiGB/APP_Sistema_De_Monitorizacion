@@ -1,0 +1,17 @@
+// Conexión con la base de datos
+//------------------------------
+const { Pool } = require('pg')
+
+// Configuración de la base de datos
+const pool = new Pool({
+  user: 'tuUsuario',
+  host: 'localhost',
+  database: 'NombreBBDD',
+  password: 'contraseña',
+  port: 5432, // puerto de la BBDD, postgres el puerto por defecto es 5432
+  });
+
+  module.exports = pool;
+
+
+//fichero que sirve para saber como configurar

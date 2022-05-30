@@ -3,6 +3,7 @@ const globales = require('./globales');
 var nodemailer = require('nodemailer');//NPM para mandar correos
 const {getTransporter} =  require('../config/transporter.config.js');
 const usuCorreo = require('../config/correo.config.json');
+const { TipusMensajeria, Rechazado } = require('./mensajeria');
 
 var enProceso=[];
 var estoyEnProceso = false;
@@ -32,15 +33,15 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
     var mailUsuario = {}
     for(var i = 0; i<usuarios.length; i++){
         var usuario = usuarios[i];
-        var email = usuario.usuario+'<'+ usuario.mensajeria.email+'>';
+        globales.msg(usuario)
+        var email = usuario.mensajeria.email;
+        var usuMail = usuario.usuario+'<'+ email +'>';
         if(email){
-            mailList.push(email);
+            mailList.push(usuMail);
             mailUsuario[email] = usuario;
-            //globales.msg(mailUsuario[email])
         }
     }
 
-    globales.msg(mailList);
     if(mailList.length==0){
         alFinalizar([])
         return;
@@ -69,17 +70,6 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
     transporter.sendMail(mailOptions, function(error, info){
         transporter.close();
 
-        /* esto no puede ir aquí
-        // El mensaje se ha enviado
-        var lgEnviado = {cod:log.lg_cod, fecha: new Date(), enviado:true};
-        
-        // Marcamos en la BBDD los mensajes enviado
-        logEnviado(lgEnviado).catch((e)=>{
-            //! Enviar este error?
-            //! no deberia dar error
-        });
-        */
-
         // Pero puede que no a todos o a ninguno
         // pero esto se deja constancia en la tabla
         // de los mensajes no enviados
@@ -97,25 +87,30 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
             rejected = error.rejected;
         } else {
             
-            globales.msg(info)
+            //globales.msg(info)
             // Se ha enviado a los destinatarios el correo
             // pero puede que no a todos
             errores = info.rejectedErrors;
             rejected = info.rejected;
         }
 
+        
+
         // Montamos la estructura de los envios rechazados
-        for (var i=0; i<false && errores.length; i++){
+        for (var i=0; i<errores.length; i++){
             var rechazado = errores[i];
             var email = rejected[i];
             var usuario = mailUsuario[email];
 
-            
-            if(e.response.statusCode>=300){
+            // https://www.ietf.org/rfc/rfc5321.txt
+            // Problemas en el correo introducido
+            if(rechazado.responseCode>=500){
                 // Errores de que no existe el destinatario o de servidor
                 // no lo ponermos en rechazado pero si informamos al administrador
-                global.msg("informa al administrador");
+                globales.msg("informa al administrador");
             }else{
+                //globales.msg(usuario)
+                // No se ha podido enviar el email así que lo guardamos
                 rechazados.push(
                     new Rechazado(
                         TipusMensajeria.email,
@@ -130,7 +125,10 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
         }
 
         //Avisamos de que hemos finalizado
-        alFinalizar(rechazados);
+        alFinalizar(rechazados, log);
+
+        // si hay más mensajes en espera recogemos al último
+        // y lo enviamos
         var es = enProceso.pop();
         if(es){
             _mandaCorreos(es.mensaje, es.usuarios, es.log, es.alFinalizar);

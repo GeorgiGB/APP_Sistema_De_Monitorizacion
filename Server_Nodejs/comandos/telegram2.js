@@ -67,11 +67,11 @@ async function botTelegram(mensaje, usuario, log){
         return false;
     }).catch((e)=>{
         let status = e.response.statusCode
-        if(status>=400&&status<500){
+        if(status>=300&&status<500){
             // No se encuentra el chat o cualquier otro error
             // por tanto no lo vamos a devolver como
             // rechazado pero si informar al administrador
-            global.msg("informa al administrador");
+            globales.msg("informa al administrador");
             return false;
         }
         return new Rechazado(

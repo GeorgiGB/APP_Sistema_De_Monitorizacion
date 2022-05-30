@@ -7,8 +7,11 @@ var nodemailer = require('nodemailer');//NPM para mandar correos
 const conexion = require('../config/db.config.js');
 const tokenBot = require('../config/tokenBot.json');
 const usuCorreo = require('../config/correo.config.json');
-// const TelegramBot = require('node-telegram-bot-api');
+const {multiUsuariosTelegram} = require('./telegram2');
+const {mandaCorreos} = require('./correos2');
 const { Estados } = require('./acciones');
+
+const mensajeria = require('./mensajeria');
 
 
 
@@ -69,7 +72,7 @@ async function registraMensajesNoEnviados(json_logs){
     return jresultado;
 }
 
-function estructuraMensaje(log){
+/*function estructuraMensaje(log){
     with(log){
         var msg = ' --- Acción --- '
             +'\nNombre: '+acc_nombre+',  Id: '+lg_acc_cod
@@ -87,14 +90,14 @@ function estructuraMensaje(log){
             +'\n-----------------------';
         return msg;
     }
-}
+}*/
 
 
 // imortante para otro tipo de servicios mira en https://nodemailer.com/smtp/well-known/
 // para la configuración completa
-const Service = 'gmail';
+//const Service = 'gmail';
 
-class Rechazado{
+/*class Rechazado{
     constructor(tipo, destino, log_cod, usm_cod, usuario, razon){
         this.tipo = tipo;
         this.destino = destino;
@@ -134,18 +137,18 @@ class EliminaNoEnviado{
     constructor(men_cod){
         this.men_cod = men_cod
     }
-}
+}*/
 
 class Buff{
     
     #total = 0;
     #finaliza = false;
-    #tiposRechazados = {};
+    #rechazados = [];
 
     constructor(){
-        for (const tipus in TipusMensajeria) {
+        /*for (const tipus in TipusMensajeria) {
             this.#tiposRechazados[tipus]=[];
-        }
+        }*/
         //globales.msg(this.#tiposRechazados)
     
     }
@@ -155,6 +158,8 @@ class Buff{
         // seguirá su camino aunque no hayan finalizado
         usuarios_mensajeria().then((usuarios)=>{
             // ya tengo los usuarios
+            // elimino el primer usuario que hace referencia al cod_error
+            usuarios.shift();
 
             // ahora los logs
             ver_logs({ desde: Desde, estado: Estados.ko, enviado:false }).then((logs)=>{
@@ -164,16 +169,23 @@ class Buff{
                 // registro y no se envia nada
                 logs.forEach((log, i) => {
                     if(i>0){
-                        var mensa = estructuraMensaje(log);
-                        this.enviaEmailATodos(mensa, usuarios, log);
+                        var mensa = mensajeria.estructuraMensaje(log);
 
-                        usuarios.forEach((usuario, k) => {
+                        this.#total++;
+                        mandaCorreos(mensa, usuarios, log,
+                            (this.finalizaEnvio).bind(this));
+                        // this.enviaEmailATodos(mensa, usuarios, log, );
+
+                        this.#total++;
+                        multiUsuariosTelegram(mensa, usuarios, log,
+                            (this.finalizaEnvio).bind(this));
+                        /*usuarios.forEach((usuario, k) => {
                             if(k>0){
                                 //! Descomenta la siguiente línea
                                 this.enviaMensajeUsuario(mensa, usuario, log);
                             }
                             
-                        });
+                        });*/
                     }
                     
                 });
@@ -182,7 +194,7 @@ class Buff{
             
         });
     }
-
+/*
     enviaEmailATodos(mensa, usuarios, log){
         this.#total++;
         enviaEmailUsuarios(mensa, usuarios, log, (function (rechazados){
@@ -196,6 +208,7 @@ class Buff{
         }).bind(this));
     }
 
+    //esto es telegram
     enviaMensajeUsuario(mensaje, usuario, log){
         // El tipo de mensajes de correo electrónico "email"
         // va por otro camino
@@ -205,6 +218,7 @@ class Buff{
             }
             // contador de envios
             this.#total++;
+            multiUsuariosTelegram(mensaje, [usuario], log);
             Mensajerias[tipus](mensaje, usuario, log).then((rechazados)=>{
                 if(rechazados){
                     //globales.msg(rechazados);
@@ -215,21 +229,23 @@ class Buff{
                 this.gestionaRechazados();
             });
         }
-    }
+    }*/
 
-    gestionaRechazados(log){
+    finalizaEnvio(rechazados, log){
         
         if(log){
             // El mensaje se ha enviado
             var lgEnviado = {cod:log.lg_cod, fecha: new Date(), enviado:true};
-            
+            globales.msg(lgEnviado)
             // Marcamos en la BBDD los mensajes enviado
             logEnviado(lgEnviado).catch((e)=>{
                 //! Enviar este error?
                 //! no deberia dar error
             });
         }
-        
+        if(rechazados.length>0){
+            this.#rechazados.push(...this.#rechazados);
+        }
         this.#total--;
         //globales.msg('descontando: '+(this.#total==0));
         if(this.#total==0){
@@ -237,14 +253,15 @@ class Buff{
             var consultas = [];
             
             //Recorremos los distintos tipos de rechazados
-            var grupoRechazados = this.#tiposRechazados;
+            /*var grupoRechazados = this.#tiposRechazados;
             for (const tipo in grupoRechazados) {
                 var elementos = grupoRechazados[tipo];
                 globales.msg(elementos);
 
-                globales.msg(elementos.length)
+                globales.msg(elementos.length)*/
                 // por cada rechazado
-                elementos.forEach(rechazado =>{
+                globales.msg(this.#rechazados);
+                this.#rechazados.forEach(rechazado =>{
                     globales.msg(rechazado);
 
                     // miramos si existe una consulta
@@ -261,16 +278,17 @@ class Buff{
                         globales.msg(rechazado)
                         // Creamos la consulta
                         consultas.push(
-                            new Consulta(
+                            new mensajeria.Consulta(
                                 rechazado.usm_cod, rechazado.log_cod, rechazado.tipo
                             )
                         );
 
                     }
                 });
-            }
+            //}
 
             // ahora Pasamos la matriz de consultas cadena JSON
+            globales.msg(JSON.stringify(consultas));
             registraMensajesNoEnviados(consultas)
             //globales.msg(JSON.stringify(consultas));
 
@@ -296,7 +314,7 @@ function envia(){
         //! administradores }
     }
 }
-
+/*
 function mandaCorreos(mensaje, usuarios, log, alFinalizar){
 
     var mailList = [];
@@ -377,7 +395,7 @@ function mandaCorreos(mensaje, usuarios, log, alFinalizar){
             var email = rejected[i];
             var usuario = mailUsuario[email];
             rechazados.push(
-                new Rechazado(
+                new mensajeria.Rechazado(
                     TipusMensajeria.email,
                     email,
                     log.lg_cod,
@@ -413,7 +431,7 @@ async function botTelegram(mensaje, usuario, log){
         globales.msg(x)
         return false;
     }).catch((e)=>{
-        return new Rechazado(
+        return new mensajeria.Rechazado(
                 TipusMensajeria.telegram,
                 chatId,
                 log.lg_cod,
@@ -422,18 +440,12 @@ async function botTelegram(mensaje, usuario, log){
                 e.toString()
             );
     })
-}
+}*/
 
-Mensajerias[TipusMensajeria.email]=mandaCorreos;
-Mensajerias[TipusMensajeria.telegram]=botTelegram;
+/*Mensajerias[TipusMensajeria.email]=mandaCorreos;
+Mensajerias[TipusMensajeria.telegram]=botTelegram;*/
+
 
 module.exports = {
-    envia:envia,
-    TipusMensajeria:TipusMensajeria,
-    Rechazado:Rechazado,
-    Consulta:Consulta,
-    ActualizaNoEnviado:ActualizaNoEnviado,
-    EliminaNoEnviado:EliminaNoEnviado,
-    estructuraMensaje:estructuraMensaje,
-    enviaEmailUsuarios:enviaEmailUsuarios
+    envia:envia
 }

@@ -130,6 +130,7 @@ class NoEnviado{
                     break;
                 
                 case mensajeria.TipusMensajeria.email:
+                        globales.msg(usuario)
                     mandaCorreos(mensaje, [usuario], log,
                         (this.finalizaEnvio).bind(this));
                     this.#total++;
@@ -144,9 +145,22 @@ class NoEnviado{
         */
     }
 
-    finalizaEnvio(rechazados){
+    finalizaEnvio(rechazados, log){
+        
+        /* 
+        // esto no puede ir aquí, van en la parte de mensajeria enviada
+        // aquí los logs ya han sido enviados. estos son los logs reenviados
+        // El mensaje se ha enviado
+        var lgEnviado = {cod:log.lg_cod, fecha: new Date(), enviado:true};
+        
+        // Marcamos en la BBDD los mensajes enviado
+        logEnviado(lgEnviado).catch((e)=>{
+            //! Enviar este error?
+            //! no deberia dar error
+        });
+        */
         if(rechazados.length>0){
-            this.#rechazados = this.#rechazados.concat(rechazados);
+            this.#rechazados.push(...rechazados);
         }
         this.#total--;
         if(this.#total==0){
@@ -308,9 +322,9 @@ class NoEnviado{
 
 function envia(){
     
-    var buff = new NoEnviado();
+    //var buff = new NoEnviado();
     try{
-        buff.inicia();
+    //    buff.inicia();
     }catch(e){
         globales.msg('Catch Envia ----------');
         globales.msg(e);
