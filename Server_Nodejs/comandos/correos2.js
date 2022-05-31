@@ -1,9 +1,8 @@
 //  Funciones generales del programa
 const globales = require('./globales');
-var nodemailer = require('nodemailer');//NPM para mandar correos
 const {getTransporter} =  require('../config/transporter.config.js');
 const usuCorreo = require('../config/correo.config.json');
-const { TipusMensajeria, Rechazado } = require('./mensajeria');
+const { TipusMensajeria, Rechazado, addMensajeAdminstrador } = require('./mensajeria');
 
 var enProceso=[];
 var estoyEnProceso = false;
@@ -17,17 +16,20 @@ function creaProceso(mensaje, usuarios, log, alFinalizar){
     }
 }
 
-function mandaCorreos(mensaje, usuarios, log, alFinalizar){
+async function mandaCorreos(mensaje, usuarios, log, alFinalizar){
     if(estoyEnProceso){
         enProceso.unshift(creaProceso(mensaje, usuarios, log, alFinalizar))
         return;
     }else{
         estoyEnProceso = true;
-        _mandaCorreos(mensaje, usuarios, log, alFinalizar);
+        _mandaCorreos(mensaje, usuarios, log, alFinalizar).catch((e)=>{
+            globales.msg(e);
+        });
     }
 
 }
-function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
+
+async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
 
     var mailList = [];
     var mailUsuario = {}
@@ -40,15 +42,11 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
             mailUsuario[email] = usuario;
         }
     }
-    globales.msg();
 
     if(mailList.length==0){
-        alFinalizar([])
+        alFinalizar([]);
         return;
     }
-
-    //Creamos el objeto de que mandara el correo
-    var transporter = getTransporter();
     
     //  Cuerpo del mensaje enviante
     var mailOptions = {
@@ -58,8 +56,11 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
         text: mensaje// El mensaje sera toda la estructura del error
     };
 
+    //Creamos el objeto de que mandara el correo
+    var transporter = getTransporter();
+
     //  Comando para mandar el correo junto con mailOptions
-    transporter.sendMail(mailOptions, function(error, info){
+    transporter.sendMail(mailOptions, function(nodeMailError, info){
         transporter.close();
 
         // Pero puede que no a todos o a ninguno
@@ -73,10 +74,10 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
         // Almacenamos los rechazados
         var rechazados = [];
 
-        if (error) {
+        if (nodeMailError) {
             // No se ha enviado a nadie
-            errores = error.rejectedErrors;
-            rejected = error.rejected;
+            errores = nodeMailError.rejectedErrors;
+            rejected = nodeMailError.rejected;
         } else {
             
             //globales.msg(info)
@@ -90,32 +91,33 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
 
         // Montamos la estructura de los envios rechazados
         for (var i=0; i<errores.length; i++){
-            var rechazado = errores[i];
+            var error = errores[i];
             var email = rejected[i];
             var usuario = mailUsuario[email];
 
+            // Creamos el objeto rechazado
+            var rechazado = new Rechazado(
+                TipusMensajeria.email,
+                email,
+                log.lg_cod,
+                usuario.cod,
+                usuario.usuario,
+                error.response
+            );
             // https://www.ietf.org/rfc/rfc5321.txt
-            // Problemas en el correo introducido
-            if(false&&rechazado.responseCode>=500){
+            // Error en la dirección del correo introducido
+            if(error.responseCode>=500){
                 // Errores de que no existe el destinatario o de servidor
                 // no lo ponermos en rechazado pero si informamos al administrador
+                addMensajeAdminstrador(rechazado);
                 globales.msg("informa al administrador");
             }else{
                 //globales.msg(usuario)
                 // No se ha podido enviar el email así que lo guardamos
-                rechazados.push(
-                    new Rechazado(
-                        TipusMensajeria.email,
-                        email,
-                        log.lg_cod,
-                        usuario.cod,
-                        usuario.usuario,
-                        rechazado.response
-                    )
-                );
+                // para registrar en los mensajes no enviados
+                rechazados.push(rechazado );
             }
         }
-
         //Avisamos de que hemos finalizado
         alFinalizar(rechazados, log);
 
@@ -130,6 +132,8 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
             
     });
 }
+
+var xx = 0
 
 module.exports = {
     mandaCorreos:mandaCorreos,

@@ -21,6 +21,29 @@ const TipusMensajeria = {
     telegram:'telegram'
 }
 
+const MensajeAdministrador = {}
+
+/*this.tipo = tipo;
+this.destino = destino;
+this.log_cod = log_cod;
+this.usm_cod = usm_cod;
+this.usuario = usuario
+this.razon = razon;*/
+function addMensajeAdminstrador(rechazado){
+    try{
+    if(!MensajeAdministrador[rechazado.tipo]){
+        MensajeAdministrador[rechazado.tipo] ={};
+    }
+    if(!MensajeAdministrador[rechazado.tipo][rechazado.usm_cod]){
+        MensajeAdministrador[rechazado.tipo][rechazado.usm_cod] = rechazado;
+        //globales.msg('añadiendo');
+        globales.msg(MensajeAdministrador[rechazado.tipo][rechazado.usm_cod]);
+    }
+}catch(e){
+    globales.msg(e);
+    }
+
+}
 
 async function usuarios_mensajeria(){
     let res = await conexion.query("SELECT * FROM ver_usuarios_mensajeria()")
@@ -142,6 +165,7 @@ Mensajerias[TipusMensajeria.telegram]=botTelegram;*/
 module.exports = {
     //envia:envia,
     TipusMensajeria:TipusMensajeria,
+    addMensajeAdminstrador:addMensajeAdminstrador,
     Rechazado:Rechazado,
     Consulta:Consulta,
     ActualizaNoEnviado:ActualizaNoEnviado,

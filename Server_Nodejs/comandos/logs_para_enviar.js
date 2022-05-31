@@ -116,43 +116,39 @@ class Buff{
         });
     }
 
-    finalizaEnvio(rechazados, log){
+    async finalizaEnvio(rechazados, log){
         
         if(log){
             // El mensaje se ha enviado
             var lgEnviado = {cod:log.lg_cod, fecha: new Date(), enviado:true};
-            //globales.msg(lgEnviado)
             // Marcamos en la BBDD los mensajes enviado
-            /*logEnviado(lgEnviado).catch((e)=>{
+            logEnviado(lgEnviado).catch((e)=>{
                 //! Enviar este error?
                 //! no deberia dar error
-            });*/
+            });
         }
         if(rechazados.length>0){
-            this.#rechazados.push(...this.#rechazados);
+            this.#rechazados.push(...rechazados);
         }
+        
         this.#total--;
+        globales.msg(this.#total);
         //globales.msg('descontando: '+(this.#total==0));
         if(this.#total==0){
             globales.msg('dentro');
             var consultas = [];
             
-                globales.msg(this.#rechazados);
                 this.#rechazados.forEach(rechazado =>{
-                    globales.msg(rechazado);
 
                     // miramos si existe una consulta
                     let consulta = consultas.find( quien =>{
                         return quien.usuario == rechazado.usm_cod && quien.log_id == rechazado.log_cod
                     });
-                    //globales.msg('--> '+consulta);
 
                     if(consulta){
-
                         // Añadimos el tipo rechazado
                         consulta.add(rechazado.tipo);
                     }else{
-                        globales.msg(rechazado)
                         // Creamos la consulta
                         consultas.push(
                             new mensajeria.Consulta(
@@ -164,8 +160,16 @@ class Buff{
                 });
 
             // ahora Pasamos la matriz de consultas cadena JSON
-            //registraMensajesNoEnviados(consultas)
-            globales.msg(JSON.stringify(consultas));
+            // globales.msg(consultas);
+            registraMensajesNoEnviados(consultas).then((x)=>{
+                globales.msg(x);
+            }).catch(e=>{
+                globales.msg(e);
+                //! Enviar este error?
+                //! no deberia dar error
+            });
+            //globales.msg(JSON.stringify(consultas));
+
 
         }
     }

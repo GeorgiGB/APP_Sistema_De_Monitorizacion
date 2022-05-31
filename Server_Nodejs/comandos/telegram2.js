@@ -9,7 +9,7 @@ const tokenBot = require('../config/tokenBot.json');
 const usuCorreo = require('../config/correo.config.json');
 const TelegramBot = require('node-telegram-bot-api');
 const { Estados } = require('./acciones');
-const { TipusMensajeria, Rechazado } = require('./mensajeria');
+const { TipusMensajeria, Rechazado, addMensajeAdminstrador } = require('./mensajeria');
 
 
 //  Token del bot
@@ -34,7 +34,7 @@ function multiUsuariosTelegram(mensaje, usuarios, log, alFinalizar){
         enProceso++;
         if(enProceso>30){
             var e = await delay(1000);
-            enProceso = 0;
+            
         }
         
         botTelegram(mensaje, usuario, log).then((rechazado)=>{
@@ -48,8 +48,12 @@ function multiUsuariosTelegram(mensaje, usuarios, log, alFinalizar){
         }).finally(()=>{
             totalUsuarios--;
             if(totalUsuarios<=0){
-                alFinalizar(rechazados)
+                // devolvemos una copia de rechazados y lo vaciamos
+                alFinalizar(rechazados);
+                rechazados = [];
             }
+            // una vez finalizado el proceso lo descontamos;
+            enProceso--;
         });
     });
 }
@@ -61,29 +65,38 @@ async function botTelegram(mensaje, usuario, log){
     var chatId = usuario.mensajeria.telegram;
         
         //globales.msg(usuario.usuario)
-    return bot.sendMessage(chatId+1,mensaje).then((x)=>{
-        globales.msg('Telegram enviado ---------');
-        globales.msg(x)
+    return bot.sendMessage(chatId,mensaje).then((x)=>{
+        /*globales.msg('Telegram enviado ---------');
+        globales.msg(x)*/
         return false;
     }).catch((e)=>{
-        let status = e.response.statusCode
+        let status = e.response.statusCode;
+
+        // Creamos el objeto rechazado
+        var rechazado = new Rechazado(
+            TipusMensajeria.telegram,
+            chatId,
+            log.lg_cod,
+            usuario.cod,
+            usuario.usuario,
+            e.toString()
+        );
+        
+        // No se encuentra el chat o cualquier otro error
         if(status>=300&&status<500){
-            // No se encuentra el chat o cualquier otro error
+            
             // por tanto no lo vamos a devolver como
             // rechazado pero si informar al administrador
             globales.msg("informa al administrador");
+            addMensajeAdminstrador(rechazado);
+            //addMensajeAdminstrador(rechazado);
             return false;
         }
-        return new Rechazado(
-                TipusMensajeria.telegram,
-                chatId,
-                log.lg_cod,
-                usuario.cod,
-                usuario.usuario,
-                e.toString()
-            );
+        return rechazado;
     })
 }
+
+var yy = 0;
 
 module.exports = {
     multiUsuariosTelegram:multiUsuariosTelegram,
