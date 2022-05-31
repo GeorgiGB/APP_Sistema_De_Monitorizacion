@@ -33,7 +33,6 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
     var mailUsuario = {}
     for(var i = 0; i<usuarios.length; i++){
         var usuario = usuarios[i];
-        globales.msg(usuario)
         var email = usuario.mensajeria.email;
         var usuMail = usuario.usuario+'<'+ email +'>';
         if(email){
@@ -41,21 +40,14 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
             mailUsuario[email] = usuario;
         }
     }
+    globales.msg();
 
     if(mailList.length==0){
         alFinalizar([])
         return;
     }
 
-    //Creamos el objeto de que mandara el correo y elegiremos el servicio que queramos
-    /*var transporter = nodemailer.createTransport({
-        // importante 
-        service: Service,
-        auth: {
-            user: usuCorreo.user,
-            pass: usuCorreo.pwd
-        }
-    })*/
+    //Creamos el objeto de que mandara el correo
     var transporter = getTransporter();
     
     //  Cuerpo del mensaje enviante
@@ -104,7 +96,7 @@ function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
 
             // https://www.ietf.org/rfc/rfc5321.txt
             // Problemas en el correo introducido
-            if(rechazado.responseCode>=500){
+            if(false&&rechazado.responseCode>=500){
                 // Errores de que no existe el destinatario o de servidor
                 // no lo ponermos en rechazado pero si informamos al administrador
                 globales.msg("informa al administrador");

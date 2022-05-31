@@ -72,84 +72,13 @@ async function registraMensajesNoEnviados(json_logs){
     return jresultado;
 }
 
-/*function estructuraMensaje(log){
-    with(log){
-        var msg = ' --- Acción --- '
-            +'\nNombre: '+acc_nombre+',  Id: '+lg_acc_cod
-            +'\nAcción: '+acc_accion
-            +'\n-----------------------'
-            +'\nDescripción: '+acc_descripcion
-            +'\n-----------------------'
-            +'\n'
-            +'\n --- Log ---'
-            +'\nId: '+lg_cod+',  Estado: '+lg_estado
-            +'\nFecha: '+lg_fecha_alta
-            +'\nEnviado: '+lg_fecha_envio
-            +'\n-----------------------'
-            +'\nDescripción: '+lg_descripcion
-            +'\n-----------------------';
-        return msg;
-    }
-}*/
-
-
-// imortante para otro tipo de servicios mira en https://nodemailer.com/smtp/well-known/
-// para la configuración completa
-//const Service = 'gmail';
-
-/*class Rechazado{
-    constructor(tipo, destino, log_cod, usm_cod, usuario, razon){
-        this.tipo = tipo;
-        this.destino = destino;
-        this.log_cod = log_cod;
-        this.usm_cod = usm_cod;
-        this.usuario = usuario
-        this.razon = razon;
-    }
-}
-
-class Consulta{
-
-    constructor(usm_cod, log_cod, tipo){
-        this.usuario = usm_cod;
-        this.log_id = log_cod;
-        this.sin_enviar = '{'+tipo+'}';
-    }
-
-    add(tipo){
-        this.sin_enviar = this.sin_enviar.replace('}', ','+tipo+'}');
-    }
-}
-
-class ActualizaNoEnviado{
-
-    constructor(men_cod, tipo){
-        this.men_cod = men_cod;
-        this.sin_enviar = '{'+tipo+'}';
-    }
-
-    add(tipo){
-        this.sin_enviar = this.sin_enviar.replace('}', ','+tipo+'}');
-    }
-}
-
-class EliminaNoEnviado{
-    constructor(men_cod){
-        this.men_cod = men_cod
-    }
-}*/
 
 class Buff{
     
     #total = 0;
-    #finaliza = false;
     #rechazados = [];
 
     constructor(){
-        /*for (const tipus in TipusMensajeria) {
-            this.#tiposRechazados[tipus]=[];
-        }*/
-        //globales.msg(this.#tiposRechazados)
     
     }
 
@@ -174,18 +103,10 @@ class Buff{
                         this.#total++;
                         mandaCorreos(mensa, usuarios, log,
                             (this.finalizaEnvio).bind(this));
-                        // this.enviaEmailATodos(mensa, usuarios, log, );
 
                         this.#total++;
                         multiUsuariosTelegram(mensa, usuarios, log,
                             (this.finalizaEnvio).bind(this));
-                        /*usuarios.forEach((usuario, k) => {
-                            if(k>0){
-                                //! Descomenta la siguiente línea
-                                this.enviaMensajeUsuario(mensa, usuario, log);
-                            }
-                            
-                        });*/
                     }
                     
                 });
@@ -194,54 +115,18 @@ class Buff{
             
         });
     }
-/*
-    enviaEmailATodos(mensa, usuarios, log){
-        this.#total++;
-        enviaEmailUsuarios(mensa, usuarios, log, (function (rechazados){
-            //globales.msg('Te he encontrado: '+rechazados)
-            // añadimos todo el array de los rechazado
-            //globales.msg(rechazados)
-
-            this.#tiposRechazados[TipusMensajeria.email].push(...rechazados);
-            this.gestionaRechazados();
-
-        }).bind(this));
-    }
-
-    //esto es telegram
-    enviaMensajeUsuario(mensaje, usuario, log){
-        // El tipo de mensajes de correo electrónico "email"
-        // va por otro camino
-        for (const tipus in usuario.mensajeria) {
-            if(tipus==TipusMensajeria.email){
-                continue;
-            }
-            // contador de envios
-            this.#total++;
-            multiUsuariosTelegram(mensaje, [usuario], log);
-            Mensajerias[tipus](mensaje, usuario, log).then((rechazados)=>{
-                if(rechazados){
-                    //globales.msg(rechazados);
-                    this.#tiposRechazados[tipus].push(rechazados);
-                }
-
-            }).finally(()=>{
-                this.gestionaRechazados();
-            });
-        }
-    }*/
 
     finalizaEnvio(rechazados, log){
         
         if(log){
             // El mensaje se ha enviado
             var lgEnviado = {cod:log.lg_cod, fecha: new Date(), enviado:true};
-            globales.msg(lgEnviado)
+            //globales.msg(lgEnviado)
             // Marcamos en la BBDD los mensajes enviado
-            logEnviado(lgEnviado).catch((e)=>{
+            /*logEnviado(lgEnviado).catch((e)=>{
                 //! Enviar este error?
                 //! no deberia dar error
-            });
+            });*/
         }
         if(rechazados.length>0){
             this.#rechazados.push(...this.#rechazados);
@@ -252,14 +137,6 @@ class Buff{
             globales.msg('dentro');
             var consultas = [];
             
-            //Recorremos los distintos tipos de rechazados
-            /*var grupoRechazados = this.#tiposRechazados;
-            for (const tipo in grupoRechazados) {
-                var elementos = grupoRechazados[tipo];
-                globales.msg(elementos);
-
-                globales.msg(elementos.length)*/
-                // por cada rechazado
                 globales.msg(this.#rechazados);
                 this.#rechazados.forEach(rechazado =>{
                     globales.msg(rechazado);
@@ -285,12 +162,10 @@ class Buff{
 
                     }
                 });
-            //}
 
             // ahora Pasamos la matriz de consultas cadena JSON
+            //registraMensajesNoEnviados(consultas)
             globales.msg(JSON.stringify(consultas));
-            registraMensajesNoEnviados(consultas)
-            //globales.msg(JSON.stringify(consultas));
 
         }
     }
