@@ -1,6 +1,6 @@
 -- FUNCTION: public.ver_logs(jsonb)
 
-DROP FUNCTION IF EXISTS public.ver_logs(jsonb);
+ DROP FUNCTION IF EXISTS public.ver_logs(jsonb);
 
 CREATE OR REPLACE FUNCTION public.ver_logs(
 	jleer jsonb,
@@ -34,7 +34,7 @@ BEGIN
 			WHERE false; -- te devuelve el tipo de record
 			
 	SELECT to_json(array_agg(operacion)) FROM
-	(SELECT l.*, ac.acc_nombre, ac.acc_descripcion, ac.acc_accion FROM logs l,
+	(SELECT l.*, ac.acc_nombre, ac.acc_descripcion, ac.acc_accion, ac.acc_tservicio FROM logs l,
 	 acciones ac, jsonb_populate_record(null::json_select_log, jleer) j
 		WHERE l.lg_acc_cod = ac.acc_cod
             AND l.lg_fecha_alta BETWEEN

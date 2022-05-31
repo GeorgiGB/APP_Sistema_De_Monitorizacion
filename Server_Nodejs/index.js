@@ -111,6 +111,7 @@ const job = cron.schedule('0 */5 * * * *',()=>{
 
     acciones.ejecuta(()=>{
         globales.msg('Las acciones han finalizado');
+        mensajeria.envia();
     });
 
     /*
@@ -135,16 +136,18 @@ const job = cron.schedule('0 */5 * * * *',()=>{
     scheduled: false
 });
 
-//job.start();
+job.start();
 
 
-/*acciones.ejecuta(()=>{
+acciones.ejecuta(()=>{
     globales.msg('Las acciones han finalizado');
-});*/
+    mensajeria.envia();
+    enviaNoEnviados.envia();
+});
 
-mensajeria.envia();
-
-//enviaNoEnviados.envia();
+//
+enviaNoEnviados.envia();
+//
 
 //! -------------------------------------
 globales.msg("Servidor ok");

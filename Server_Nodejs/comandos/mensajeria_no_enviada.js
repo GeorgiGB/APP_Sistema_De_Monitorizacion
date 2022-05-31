@@ -124,9 +124,9 @@ class NoEnviado{
         sin_enviar.forEach(no_enviado => {
             switch(no_enviado){
                 case mensajeria.TipusMensajeria.telegram:
-                    /*this.#total++;
+                    this.#total++;
                     multiUsuariosTelegram(mensaje, [usuario], log,
-                        (this.finalizaEnvio).bind(this));*/
+                        (this.finalizaEnvio).bind(this));
                     break;
                 
                 case mensajeria.TipusMensajeria.email:
@@ -322,9 +322,9 @@ class NoEnviado{
 
 function envia(){
     
-    //var buff = new NoEnviado();
+    var buff = new NoEnviado();
     try{
-    //    buff.inicia();
+        buff.inicia();
     }catch(e){
         globales.msg('Catch Envia ----------');
         globales.msg(e);
