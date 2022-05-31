@@ -1,4 +1,4 @@
-//  Funciones generales del programa
+//  Funciones generales del programamuerto
 const globales = require('./globales');
 const fetch = require('node-fetch');// npm i node-fetch@2
 const ver_acciones = require('./ver_acciones');
@@ -8,7 +8,8 @@ const conexion = require('../config/db.config.js');
 const tokenBot = require('../config/tokenBot.json');
 const usuCorreo = require('../config/correo.config.json');
 const {multiUsuariosTelegram} = require('./telegram2');
-const {mandaCorreos, enviaFallos} = require('./correos2');
+const {mandaCorreos, enviaFallos, estoyMuerto, dimeLaRazon} = require('./correos2');
+const administrador = require('../config/administrador.config.json');
 const { Estados } = require('./acciones');
 
 const mensajeria = require('./mensajeria');
@@ -100,10 +101,12 @@ class Buff{
                 logs.forEach((log, i) => {
                     if(i>0){
                         var mensa = mensajeria.estructuraMensaje(log);
-
-                        this.#total++;
-                        mandaCorreos(mensa, usuarios, log,
-                            (this.finalizaEnvio).bind(this));
+                        
+                        if(!estoyMuerto()){
+                            this.#total++;
+                            mandaCorreos(mensa, usuarios, log,
+                                (this.finalizaEnvio).bind(this));
+                        }
 
                         this.#total++;
                         multiUsuariosTelegram(mensa, usuarios, log,
@@ -134,8 +137,7 @@ class Buff{
         
         this.#total--;
         globales.msg(this.#total);
-        //globales.msg('descontando: '+(this.#total==0));
-        if(this.#total==0){
+        if(this.#total<=0){
             globales.msg('dentro');
             var consultas = [];
             
@@ -170,7 +172,17 @@ class Buff{
                 //! no deberia dar error
             });
             enviaFallos();
-            //globales.msg(JSON.stringify(consultas));
+        globales.msg("Estoy muerto: "+estoyMuerto());
+        if(estoyMuerto()){
+            // Matamos al servidor?
+            // no todaía queda Telegram
+            // Envia un mensaje por telegram!!!
+            var rlog = {
+                acc_nombre: "Alertas API, correo",
+                lg_estado: "KO"
+            };
+            multiUsuariosTelegram(dimeLaRazon(), [administrador], rlog);
+        }
 
 
         }

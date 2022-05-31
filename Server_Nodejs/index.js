@@ -35,12 +35,6 @@ const usuarios_mensajeria = require('./comandos/usuarios_mensajeria');
 //  Llamada del comando logs para registrar un archivos de logs.json
 const logs = require('./comandos/ver_logs');
 
-//  Llamada del bot de Telegram
-const bot = require('./bots/bot_telegram');
-
-//  Llamada del bot de Correo electrónico
-const mandar_correo = require('./bots/bot_manda_correos');
-
 //  Ver las acciones del servidor
 const ver_acciones = require('./comandos/ver_acciones')
 

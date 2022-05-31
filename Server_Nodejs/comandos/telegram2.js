@@ -50,7 +50,9 @@ function multiUsuariosTelegram(mensaje, usuarios, log, alFinalizar){
             totalUsuarios--;
             if(totalUsuarios<=0){
                 // devolvemos una copia de rechazados y lo vaciamos
-                alFinalizar(rechazados);
+                if(alFinalizar){
+                    alFinalizar(rechazados, log);
+                }
                 rechazados = [];
             }
             // una vez finalizado el proceso lo descontamos;
