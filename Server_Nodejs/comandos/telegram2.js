@@ -9,7 +9,8 @@ const tokenBot = require('../config/tokenBot.json');
 const usuCorreo = require('../config/correo.config.json');
 const TelegramBot = require('node-telegram-bot-api');
 const { Estados } = require('./acciones');
-const { TipusMensajeria, Rechazado, addMensajeAdminstrador } = require('./mensajeria');
+const { TipusMensajeria, Rechazado } = require('./mensajeria');
+const { addMensajeAdminstrador } = require('./correos2');
 
 
 //  Token del bot
@@ -81,7 +82,7 @@ async function botTelegram(mensaje, usuario, log){
             usuario.usuario,
             e.toString()
         );
-        
+
         // No se encuentra el chat o cualquier otro error
         if(status>=300&&status<500){
             

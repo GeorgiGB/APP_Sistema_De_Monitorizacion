@@ -2,7 +2,8 @@
 const globales = require('./globales');
 const {getTransporter} =  require('../config/transporter.config.js');
 const usuCorreo = require('../config/correo.config.json');
-const { TipusMensajeria, Rechazado, addMensajeAdminstrador } = require('./mensajeria');
+const { TipusMensajeria, Rechazado } = require('./mensajeria');
+const administrador = require('../config/administrador.config.json');
 
 var enProceso=[];
 var estoyEnProceso = false;
@@ -36,7 +37,9 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
     for(var i = 0; i<usuarios.length; i++){
         var usuario = usuarios[i];
         var email = usuario.mensajeria.email;
-        var usuMail = usuario.usuario+'<'+ email +'>';
+        var usuMail =  (usuario.usuario?
+                        usuario.usuario: '')
+                        +'<'+ email +'>';
         if(email){
             mailList.push(usuMail);
             mailUsuario[email] = usuario;
@@ -87,7 +90,7 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
             rejected = info.rejected;
         }
 
-        
+        var todoCorrecto = true;
 
         // Montamos la estructura de los envios rechazados
         for (var i=0; i<errores.length; i++){
@@ -117,9 +120,11 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
                 // para registrar en los mensajes no enviados
                 rechazados.push(rechazado );
             }
+
+            todoCorrecto = false;
         }
         //Avisamos de que hemos finalizado
-        alFinalizar(rechazados, log);
+        alFinalizar(rechazados, log, todoCorrecto);
 
         // si hay más mensajes en espera recogemos al último
         // y lo enviamos
@@ -133,8 +138,67 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
     });
 }
 
-var xx = 0
+const MensajesAdministrador = new Map();
+function addMensajeAdminstrador(rechazado){
+    try{
+        var t = rechazado.tipo;
+        if(!MensajesAdministrador.has(t)){
+            MensajesAdministrador.set(t, new Map());
+        }
+        var cod = rechazado.usm_cod;
+        var m1 = MensajesAdministrador.get(t);
+        if(!m1.has(cod)){
+            m1.set(rechazado.usm_cod, rechazado);
+            //globales.msg('añadiendo');
+            globales.msg(m1.get(cod));
+        }
+    }catch(e){
+        globales.msg(e);
+    }
+}
+
+function enviaFallos(){
+    var mensaje;
+    MensajesAdministrador.forEach(m1 => {
+        if(!mensaje){
+            mensaje = "  --- Problemas y errores del Sistema de alertas API - 1.0 ---\n\n";
+        }
+        var descrp;
+        var rr;
+        m1.forEach(r=>{
+            rr = r;
+            if(!descrp){
+                descrp = " + Errores "+(r.tipo.toUpperCase()+':\n\n');
+            }
+            descrp += "    Usuario: "+ r.usm_cod+', destino: '+r.destino+'\n';
+            descrp += "    Mensaje: "+ r.razon+'\n';
+            descrp += "      ------\n"
+            //creo el mensaje
+        });
+        if(rr){
+            descrp += "     ---- Final "+rr.tipo+' ---\n\n\n';
+        }
+        mensaje += descrp;
+    });
+
+    if(mensaje){
+        var log = {
+            acc_nombre: "Alertas API",
+            lg_estado: "KO"
+        };
+
+        mandaCorreos(mensaje, [administrador], log, function(x, y, ok){
+            if(ok){
+                MensajesAdministrador.clear();
+                globales.msg('se envió y se puede vaciar');
+            }
+        });
+    }
+
+}
 
 module.exports = {
+    addMensajeAdminstrador:addMensajeAdminstrador,
     mandaCorreos:mandaCorreos,
+    enviaFallos:enviaFallos
 }

@@ -5,4 +5,5 @@ package-lock.json
 **/correo.config.json
 **/tokenBot.json
 **/transporter.config.js
+**/administrador.config.json
 registroLogs.txt

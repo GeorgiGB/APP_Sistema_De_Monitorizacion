@@ -8,10 +8,11 @@ const conexion = require('../config/db.config.js');
 const tokenBot = require('../config/tokenBot.json');
 const usuCorreo = require('../config/correo.config.json');
 const {multiUsuariosTelegram} = require('./telegram2');
-const {mandaCorreos} = require('./correos2');
+const {mandaCorreos, enviaFallos} = require('./correos2');
 const { Estados } = require('./acciones');
 
 const mensajeria = require('./mensajeria');
+//const { enviaFallos,  } = require('./administrador');
 
 
 
@@ -168,6 +169,7 @@ class Buff{
                 //! Enviar este error?
                 //! no deberia dar error
             });
+            enviaFallos();
             //globales.msg(JSON.stringify(consultas));
 
 

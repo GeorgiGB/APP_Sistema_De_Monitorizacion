@@ -1,14 +1,7 @@
 //  Funciones generales del programa
 const globales = require('./globales');
-const fetch = require('node-fetch');// npm i node-fetch@2
-const ver_acciones = require('./ver_acciones');
-const inserta_log = require('./inserta_log');
-var nodemailer = require('nodemailer');//NPM para mandar correos
 const conexion = require('../config/db.config.js');
-const tokenBot = require('../config/tokenBot.json');
-const usuCorreo = require('../config/correo.config.json');
-// const TelegramBot = require('node-telegram-bot-api');
-const { Estados } = require('./acciones');
+//const { mandaCorreos } = require('./correos2');
 
 
 
@@ -19,30 +12,6 @@ const Mensajerias = {};
 const TipusMensajeria = {
     email:'email',
     telegram:'telegram'
-}
-
-const MensajeAdministrador = {}
-
-/*this.tipo = tipo;
-this.destino = destino;
-this.log_cod = log_cod;
-this.usm_cod = usm_cod;
-this.usuario = usuario
-this.razon = razon;*/
-function addMensajeAdminstrador(rechazado){
-    try{
-    if(!MensajeAdministrador[rechazado.tipo]){
-        MensajeAdministrador[rechazado.tipo] ={};
-    }
-    if(!MensajeAdministrador[rechazado.tipo][rechazado.usm_cod]){
-        MensajeAdministrador[rechazado.tipo][rechazado.usm_cod] = rechazado;
-        //globales.msg('añadiendo');
-        globales.msg(MensajeAdministrador[rechazado.tipo][rechazado.usm_cod]);
-    }
-}catch(e){
-    globales.msg(e);
-    }
-
 }
 
 async function usuarios_mensajeria(){
@@ -165,7 +134,6 @@ Mensajerias[TipusMensajeria.telegram]=botTelegram;*/
 module.exports = {
     //envia:envia,
     TipusMensajeria:TipusMensajeria,
-    addMensajeAdminstrador:addMensajeAdminstrador,
     Rechazado:Rechazado,
     Consulta:Consulta,
     ActualizaNoEnviado:ActualizaNoEnviado,
