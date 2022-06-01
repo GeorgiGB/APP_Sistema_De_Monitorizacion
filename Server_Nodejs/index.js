@@ -140,7 +140,7 @@ const job = cron.schedule('0 */5 * * * *',()=>{
     scheduled: false
 });
 
-job.start();
+//job.start();
 
 /*
 acciones.ejecuta(()=>{
