@@ -105,7 +105,6 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
                 errores = nodeMailError.rejectedErrors;
                 rejected = nodeMailError.rejected;
                 if(nodeMailError.responseCode==535){
-                    //! Esto a escribir en el archivo de log del servidor
                     todoCorrecto = false;
                     muertoNodeMailer = true;
                     motivo = " --- ¡¡¡EL BOT NODEMAILER HA MUERTO!!! ---\n"

@@ -74,7 +74,7 @@ async function botTelegram(mensaje, usuario, log){
         return false;
     }).catch((e)=>{
         //globales.msg(e)
-        let status = e.response.statusCode;
+        let status = !e.response?-1:e.response.statusCode;
 
         // Creamos el objeto rechazado
         var rechazado = new Rechazado(

@@ -16,6 +16,18 @@ async function verMensajesNoEnviados(){
     return jresultado;
 }
 
+
+async function eliminaMensajesNoEnviados(json_logs){
+        
+    //si el estado esta vacio, mandara los registros del dia actual
+    let res_logs = await conexion.query("SELECT * FROM elimina_de_mensajes_no_enviados('"+JSON.stringify(json_logs)+"');");
+    
+    let jresultado = res_logs.rows[0].jresultado;
+
+
+    return jresultado;
+}
+
 function construyeUsuario(objeto){
     return{
         cod:objeto.cod,
@@ -230,6 +242,9 @@ class NoEnviado{
             
         globales.msg(' --- Eliminamos de mensajes no enviados ----');
         globales.msg(JSON.stringify(aEliminar));
+        eliminaMensajesNoEnviados(aEliminar).then(res=>{
+            globales.msg(res);
+        });
     }
     /*enviaEmailATodos(mensa, usuarios, log){
         this.#total++;

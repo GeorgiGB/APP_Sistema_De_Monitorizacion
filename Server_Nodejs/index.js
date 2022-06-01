@@ -114,6 +114,10 @@ const job = cron.schedule('0 */5 * * * *',()=>{
         mensajeria.envia();
     });
 
+    // enviaNoEnviados se ejecutará una vez cada hora
+    
+    enviaNoEnviados.envia();
+
     /*
     let res_anterior = []
     logs({desde:"2022-05-17", hasta:"2022-05-20"})
@@ -138,15 +142,17 @@ const job = cron.schedule('0 */5 * * * *',()=>{
 
 job.start();
 
-
+/*
 acciones.ejecuta(()=>{
     globales.msg('Las acciones han finalizado');
     mensajeria.envia();
     enviaNoEnviados.envia();
 });
+*/
+//mensajeria.envia();
 
 //
-enviaNoEnviados.envia();
+//enviaNoEnviados.envia();
 //
 
 //! -------------------------------------
