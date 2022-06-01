@@ -63,6 +63,9 @@ async function registraMensajesNoEnviados(json_logs){
 
 function estructuraMensaje(log){
     with(log){
+        if(lg_fecha_envio==null){
+            lg_fecha_envio = (new Date()).toString();
+        }
         var msg = ' --- Acción --- '
             +'\nNombre: '+acc_nombre+',  Id: '+lg_acc_cod
             +'\nAcción: '+acc_accion

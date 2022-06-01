@@ -71,47 +71,10 @@ class NoEnviado{
             mensajesUsuarios.forEach((menUsu, i) => {
                 if(i>0){
                     this.inicializaEnvia(menUsu);
-                    /*usuarios.forEach((usuario, k) => {
-                        if(k>0){
-                            //! Descomenta la siguiente línea
-                            this.enviaMensajeUsuario(mensa, usuario, men);
-                        }
-                        
-                    });*/
                 }
                 
             });
         }));
-
-
-        /*usuarios_mensajeria().then((usuarios)=>{
-            // ya tengo los usuarios
-
-            // ahora los logs
-            ver_logs({ desde: Desde, estado: Estados.ko, enviado:false }).then((logs)=>{
-
-                // Ya podemos enviar
-                // El log[0] contiene cod_error, por tanto si hay error sólo tenemos un
-                // registro y no se envia nada
-                logs.forEach((log, i) => {
-                    if(i>0){
-                        var mensa = estructuraMensaje(log);
-                        this.enviaEmailATodos(mensa, usuarios, log);
-
-                        usuarios.forEach((usuario, k) => {
-                            if(k>0){
-                                //! Descomenta la siguiente línea
-                                this.enviaMensajeUsuario(mensa, usuario, log);
-                            }
-                            
-                        });
-                    }
-                    
-                });
-            });
-
-            
-        });*/
     }
 
     inicializaEnvia(mensajeUsuario ){
