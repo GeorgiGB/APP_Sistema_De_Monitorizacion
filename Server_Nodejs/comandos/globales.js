@@ -1,7 +1,16 @@
-let _debug = true;
-const header = require('./cabecera');
-var fs = require('fs');
+// Módulos necesarios para trabaja
+const header = require('./cabecera'); // Crea la cabecera para la respuesta
+var fs = require('fs'); // Sistema de archivos para poder escribir en el log del sistema
 
+const _debug = true;
+//  Función que utilizaremos para mandar mensajes por pantalla y comprobar errores
+function msg(message){
+    if(_debug){
+        console.log(message)
+    }
+}
+
+// Constantes de la respuestas de la BBDD
 const RespuestasBBDD = {
     ok : '0',
     userOrPwdNotFound: '-404',
@@ -11,6 +20,8 @@ const RespuestasBBDD = {
     invalidTextRepresentation: '-22P02',
 }
 
+//Constantes con los códigos de respuesta
+// utilizados por el servidor
 const CodigosServidor ={
     ok : 200,
     recursoNoEncontrado: 404,
@@ -18,18 +29,14 @@ const CodigosServidor ={
     error:500
 }
 
-//  Función que utilizaremos para mandar mensajes por pantalla y comprobar errores
-function msg(message){
-    if(_debug){
-        console.log(message)
-    }
-}
 
-//  Función que permite la petición a la base de datos con la información solicitada
+// Función común para centralizar las respuestas
+// de la BBDD generadas por las diferentes solicitudes al servidor
 function peticiones(response, res){
 
     let responseErr = response[0].cod_error;
     let status = CodigosServidor.error;
+    //Controlamos las respuestas
     with(RespuestasBBDD){
         switch (responseErr){
             case ok:
@@ -39,38 +46,36 @@ function peticiones(response, res){
             case userNotAuth:
                 status = CodigosServidor.userNotAuth;
                 break;
-
+            // No se ha podido encontrar el recurso solicitado
+            // La respuesta de la BBDD contiene el motivo
             case uniqueViolation:
-
             case foreignKeyViolation:
-
             case invalidTextRepresentation:
-                
             case userOrPwdNotFound:
                 status = CodigosServidor.recursoNoEncontrado
                 break;
-                
+            // Cualquier otro código és un error del servidor
+            // de la BBDD
             default:
                 status = CodigosServidor.error;
         }
     }
 
-    // Errores de la BBDD
+    // Errores de la BBDD y lo registramos
     if(status == CodigosServidor.error){
         registrarErr(JSON.stringify(response[0]))
     }
 
-
-    msg(status)
-     // Aquí gneramos la respuesta
+    // Enviamos la respuesta del servidor
     header(res).status(status).json(response)
 }
 
-//  Función asincrona que añade un try cath para evitar errores
+//  Función asíncrona que añade un try catch para evitar errores
 //  y manda la peticion deseada
 function lanzarPeticion(x, req, res){
+    // Capturamos los posibles errores y los registramos
+    // con la función error de servidor
     try {
-        //header(res).status(parseInt('hola')).json("asa")
         let authorization = req.headers.authorization
         if(authorization){
             req.body.ctoken = authorization.split(' ')[1]
@@ -84,6 +89,8 @@ function lanzarPeticion(x, req, res){
     }
 }
 
+// Se genera la respuesta y el status del error
+// adjuntando la respuesta en formato JSON
 function errorDeServidor(res, err){
     let msg_error = {status : CodigosServidor.error,
         cod_error: -1,
@@ -105,22 +112,12 @@ function registrarErr(msgerr){
             if (err) throw err;});
     }catch (err){
         msg(err)
-    }}
-
-function crearJSon(nombre, x){
-        try{
-            fs.writeFileSync(nombre+".json", x,function (err){
-            // si se produce un error  al escribir un fichero y lo lanzamos
-            // el servidor se cuelga
-            if (err) throw err;});
-        }catch (err){
-            msg(err)   
     }
 }
+
 
 module.exports = {
     msg:msg,
     peticiones:peticiones,
     lanzarPeticion:lanzarPeticion,
-    crearJSon:crearJSon
 }

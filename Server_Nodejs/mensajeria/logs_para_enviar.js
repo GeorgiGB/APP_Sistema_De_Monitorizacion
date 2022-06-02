@@ -1,12 +1,7 @@
 //  Funciones generales del programamuerto
 const globales = require('../comandos/globales');
 const fetch = require('node-fetch');// npm i node-fetch@2
-const ver_acciones = require('../comandos/ver_acciones');
-const inserta_log = require('../comandos/inserta_log');
-var nodemailer = require('nodemailer');//NPM para mandar correos
 const conexion = require('../config/db.config.js');
-const tokenBot = require('../config/tokenBot.json');
-const usuCorreo = require('../config/correo.config.json');
 const {multiUsuariosTelegram} = require('../bots/telegram');
 const {mandaCorreos, enviaFallos, estoyMuerto, dimeLaRazon} = require('../bots/correos');
 const administrador = require('../config/administrador.config.json');
@@ -20,11 +15,6 @@ const mensajeria = require('../mensajeria/mensajeria');
 
 
 const Desde = new Date(0);
-const Mensajerias = {};
-const TipusMensajeria = {
-    email:'email',
-    telegram:'telegram'
-}
 
 
 async function usuarios_mensajeria(){
@@ -191,7 +181,7 @@ class Buff{
 
 function enviaEmailUsuarios(mensaje, usuarios, log, alFinalizar){
 
-    Mensajerias[TipusMensajeria.email](mensaje, usuarios, log, alFinalizar);
+    Mensajerias[TipoMensajeria.email](mensaje, usuarios, log, alFinalizar);
 }
 
 
@@ -207,133 +197,6 @@ function envia(){
         //! administradores }
     }
 }
-/*
-function mandaCorreos(mensaje, usuarios, log, alFinalizar){
-
-    var mailList = [];
-    var mailUsuario = {}
-    for(var i = 1; i<usuarios.length; i++){
-        var usuario = usuarios[i];
-        var email = usuario.mensajeria.email;
-        if(email){
-            mailList.push(email);
-            mailUsuario[email] = usuario;
-            //globales.msg(mailUsuario[email])
-        }
-    }
-
-    globales.msg(mailList);
-
-    if(mailList.length==0){
-        return mailList;
-    }
-
-    //Creamos el objeto de que mandara el correo y elegiremos el servicio que queramos
-    var transporter = nodemailer.createTransport({
-        // importante 
-        service: Service,
-        auth: {
-            user: usuCorreo.user,
-            pass: usuCorreo.pwd
-        }
-    })
-    
-    //  Cuerpo del mensaje enviante
-    var mailOptions = {
-        from: usuCorreo.user, // Recoge el usuario escrito en el archivo json
-        bcc: mailList, //  Se lo manda a la/s personas que están en el listado de correos 
-        subject: log.acc_nombre+': '+log.lg_estado, // El asunto será el nombre la acción 
-        text: mensaje// El mensaje sera toda la estructura del error
-    };
-    
-    //  Comando para mandar el correo junto con mailOptions
-    transporter.sendMail(mailOptions, function(error, info){
-        transporter.close();
-
-        // El mensaje se ha enviado
-        var lgEnviado = {cod:log.lg_cod, fecha: new Date(), enviado:true};
-        
-        // Marcamos en la BBDD los mensajes enviado
-        logEnviado(lgEnviado).catch((e)=>{
-            //! Enviar este error?
-            //! no deberia dar error
-        });
-
-
-        // Pero puede que no a todos o a ninguno
-        // pero esto se deja constancia en la tabla
-        // de los mensajes no enviados
-
-        // Objetos de errores en el envio
-        var errores = [];
-        var rejected = [];
-
-        // Almacenamos los rechazados
-        var rechazados = [];
-
-        if (error) {
-            // No se ha enviado a nadie
-            errores = error.rejectedErrors;
-            rejected = error.rejected;
-        } else {
-            // Se ha enviado a los destinatarios el correo
-            // pero puede que no a todos
-            errores = info.rejectedErrors;
-            rejected = info.rejected;
-        }
-
-        // Montamos la estructura de los envios rechazados
-        for (var i=0; i<errores.length; i++){
-            var rechazado = errores[i];
-            var email = rejected[i];
-            var usuario = mailUsuario[email];
-            rechazados.push(
-                new mensajeria.Rechazado(
-                    TipusMensajeria.email,
-                    email,
-                    log.lg_cod,
-                    usuario.cod,
-                    usuario.usuario,
-                    rechazado.response
-                )
-            );
-        }
-
-        if(alFinalizar){
-            //Avisamos de que hemos finalizado
-            alFinalizar(rechazados);
-        }
-    });
-}
-
-//  Token del bot
-const token = tokenBot.token;
-
-// Create a bot that uses 'polling' to fetch new updates
-// const bot = new TelegramBot(token, {polling: true});
-    
-async function botTelegram(mensaje, usuario, log){
-
-    //globales.msg('esoty enviando');
-    //  Manda un mensaje automático de los errores del dia actual
-    var chatId = usuario.mensajeria.telegram;
-        
-        //globales.msg(usuario.usuario)
-    return bot.sendMessage(chatId+1,mensaje).then((x)=>{
-        globales.msg('Telegram enviado ---------');
-        globales.msg(x)
-        return false;
-    }).catch((e)=>{
-        return new mensajeria.Rechazado(
-                TipusMensajeria.telegram,
-                chatId,
-                log.lg_cod,
-                usuario.cod,
-                usuario.usuario,
-                e.toString()
-            );
-    })
-}*/
 
 /*Mensajerias[TipusMensajeria.email]=mandaCorreos;
 Mensajerias[TipusMensajeria.telegram]=botTelegram;*/

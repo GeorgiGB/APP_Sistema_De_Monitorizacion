@@ -4,19 +4,22 @@ const fetch = require('node-fetch');// npm i node-fetch@2
 const ver_acciones = require('./ver_acciones');
 const inserta_log = require('./inserta_log');
 const { msg } = require('./globales');
-const { FetchError } = require('node-fetch');
 
+// Constantes utilizadas para enviar cada...
 const Cada = {
     dia: 'dia',
     hora: 'hora',
     cincoMin: 'cinco_min'
-    };
+};
 
+// Estados del log    
 const Estados ={
     ok: 'ok',
     ko: 'ko'
 };
 
+// Constantes con el tiempo en mili segundos para
+// enviar según cada
 const Diferencia = {
     // dia - hora - min - seg - milis
     dia: 24 * 60 * 60 * 1000,
@@ -24,13 +27,17 @@ const Diferencia = {
     cincoMin: 5 * 60 * 1000
 };
 
+// Las contestaciones de los servidores nos pueden venir en formato JSON o HTML
 const ContentType = {
     textHtml: 'text/html',
     json:'application/json'
 };
 
+// La respuesta correcta
 const HttpOk = 200;
 
+//Una Acción necesita de los siguientes parámetros
+// que se obtinene de la consulta en la BBDD
 class Accion {
     constructor(jsonAccion) {
         this.id = jsonAccion.acc_cod;
@@ -49,6 +56,7 @@ class Accion {
                 new Date(0): new Date(Date.parse(this.ultUso)); //Devuelve mili segundos
     }
 
+    // Calculamos el tiempo transcurrido desde la última consulta
     async inicia(){
         var tiempoTranscurrido = (new Date()).getTime() - this.ultUso.getTime();
         var ejecuta = false;
@@ -84,11 +92,7 @@ class Accion {
                     // si estamos aquí es porque ha habido
                     // un error en la dirección web u otro
                     // lanzado por el módulo "node-fetch"
-                    this.resultado = {
-                        accion:this.id,
-                        estado: Estados.ko,
-                        descripcion:errorBusqueda.toString()
-                    };
+                    this.guardaError(errorBusqueda);
                     return;
                 });
             }else{
@@ -99,9 +103,16 @@ class Accion {
 
     }
 
+
+    guardaError(error){
+        this.resultado = {
+            accion:this.id,
+            estado: Estados.ko,
+            descripcion:error.toString()
+        };
+    }
     
     guardaDatosRespuesta(res){
-
         this.resultado = {
             accion:this.id,
             estado:
@@ -111,10 +122,10 @@ class Accion {
         };
     }
 
-}
-
+} /// ---- Final clase Acciones ----
 
 async function cargaAcciones(){
+    // Consultamos todas las acciones a realizar
     var res = await ver_acciones({});
     let error = res[0].cod_error;
     let acciones = [];
@@ -129,24 +140,6 @@ async function cargaAcciones(){
 
 }
 
-async function guardaResultado(accion){
-    if(accion.resultado){
-        // insertamos el log en la BBDD
-        return inserta_log([accion.resultado]).then((res)=>{
-            return res;
-        });
-    }else{
-        if(!accion.accion){
-            // una acción sin accion!?
-            // Tenemos una acción no definida en la BBDD
-            //! TODO crear el envío a los usuarios
-            //! administradores 
-            globales.msg('Acción no definida: '+accion.id+', '+accion.nombre);
-        }
-    }
-    return false
-}
-
 
 function ejecuta(siguiente){
     cargaAcciones().then((acciones) =>{
@@ -157,7 +150,7 @@ function ejecuta(siguiente){
                 const res = await guardaResultado(accion);
                 // Acciones ya ha finalizado su trabajo
                 // No envía ningún mensaje
-                // Los mensajes los envia Mensajeria
+                // Los mensajes los envia Mensajerias
                 globales.msg(i);
                 if (res) {
                     globales.msg(res);
@@ -183,6 +176,24 @@ function ejecuta(siguiente){
         });
     });
 
+}
+
+async function guardaResultado(accion){
+    if(accion.resultado){
+        // insertamos el log en la BBDD
+        return inserta_log([accion.resultado]).then((res)=>{
+            return res;
+        });
+    }else{
+        if(!accion.accion){
+            // una acción sin accion!?
+            // Tenemos una acción no definida en la BBDD
+            //! TODO crear el envío a los usuarios
+            //! administradores 
+            globales.msg('Acción no definida: '+accion.id+', '+accion.nombre);
+        }
+    }
+    return false
 }
 
 module.exports = {

@@ -68,7 +68,7 @@ class NoEnviado{
     #consultActualizados = [];
 
     constructor(){
-        /*for (const tipus in mensajeria.TipusMensajeria) {
+        /*for (const tipus in mensajeria.TipoMensajeria) {
             this.#tiposEnvios[tipus]=[];
         }*/
         //globales.msg(this.#tiposRechazados)
@@ -98,13 +98,13 @@ class NoEnviado{
         this.#actualizados.push(construyeActualizado(mensajeUsuario));
         sin_enviar.forEach(no_enviado => {
             switch(no_enviado){
-                case mensajeria.TipusMensajeria.telegram:
+                case mensajeria.TipoMensajeria.telegram:
                     this.#total++;
                     multiUsuariosTelegram(mensaje, [usuario], log,
                         (this.finalizaEnvio).bind(this));
                     break;
                 
-                case mensajeria.TipusMensajeria.email:
+                case mensajeria.TipoMensajeria.email:
                         globales.msg(usuario)
                     mandaCorreos(mensaje, [usuario], log,
                         (this.finalizaEnvio).bind(this));
@@ -216,7 +216,7 @@ class NoEnviado{
             // añadimos todo el array de los rechazado
             //globales.msg(rechazados)
 
-            this.#tiposRechazados[TipusMensajeria.email].push(...rechazados);
+            this.#tiposRechazados[TipoMensajeria.email].push(...rechazados);
             this.gestionaRechazados();
 
         }).bind(this));
@@ -226,7 +226,7 @@ class NoEnviado{
         // El tipo de mensajes de correo electrónico "email"
         // va por otro camino
         for (const tipus in usuario.mensajeria) {
-            if(tipus==TipusMensajeria.email){
+            if(tipus==TipoMensajeria.email){
                 continue;
             }
             // contador de envios
@@ -294,7 +294,7 @@ class NoEnviado{
 
 /*function enviaEmailUsuarios(mensaje, usuarios, log, alFinalizar){
 
-    Mensajerias[TipusMensajeria.email](mensaje, usuarios, log, alFinalizar);
+    Mensajerias[TipoMensajeria.email](mensaje, usuarios, log, alFinalizar);
 }*/
 
 
@@ -312,8 +312,8 @@ function envia(){
 }
 
 
-/*Mensajerias[TipusMensajeria.email]=mandaCorreos;
-Mensajerias[TipusMensajeria.telegram]=botTelegram;*/
+/*Mensajerias[TipoMensajeria.email]=mandaCorreos;
+Mensajerias[TipoMensajeria.telegram]=botTelegram;*/
 
 module.exports = {
     envia:envia

@@ -1,15 +1,9 @@
 //  Funciones generales del programa
 const globales = require('../comandos/globales');
-const fetch = require('node-fetch');// npm i node-fetch@2
-const ver_acciones = require('../comandos/ver_acciones');
-const inserta_log = require('../comandos/inserta_log');
-var nodemailer = require('nodemailer');//NPM para mandar correos
-const conexion = require('../config/db.config.js');
 const tokenBot = require('../config/tokenBot.json');
-const usuCorreo = require('../config/correo.config.json');
 const TelegramBot = require('node-telegram-bot-api');
 const { Estados } = require('../comandos/acciones');
-const { TipusMensajeria, Rechazado } = require('../mensajeria/mensajeria');
+const { TipoMensajeria: TipoMensajeria, Rechazado } = require('../mensajeria/mensajeria');
 const { addMensajeAdminstrador } = require('./correos');
 
 
@@ -19,12 +13,17 @@ const token = tokenBot.token;
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
+// Contamos los proceso de envío de telegram
 let enProceso = 0;
 
+// Telegram sólo permite enviar 30 mensajes/segundo 
+// por lo que creamos un retraso
 function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
   }
-  
+
+
+// Función para enviar un mismo mensaje a múltiples usuarios
 function multiUsuariosTelegram(mensaje, usuarios, log, alFinalizar){
     var totalUsuarios = usuarios.length;
     var rechazados = [];
@@ -32,13 +31,20 @@ function multiUsuariosTelegram(mensaje, usuarios, log, alFinalizar){
     usuarios.forEach(async usuario => {
         // Telegram solo envía mensajes de 1 en 1
         // y un máximo de 30 mensajes/segundo
-        enProceso++;
-        if(enProceso>30){
+        // aquí realizamos el control de la cantidad de mensajes que
+        // se han enviado en un segundo
+        // así que toca esperar
+        if(enProceso>=30){
             var e = await delay(1000);
             
         }
+        // ya podemos iniciar el proceso
+        enProceso++;
         
+
+        //Enviamos el telegram
         botTelegram(mensaje, usuario, log).then((rechazado)=>{
+            // Si es rechazado lo ponemos en la lista de rechazados
             if(rechazado){
                 rechazados.push(rechazado);
             }
@@ -78,7 +84,7 @@ async function botTelegram(mensaje, usuario, log){
 
         // Creamos el objeto rechazado
         var rechazado = new Rechazado(
-            TipusMensajeria.telegram,
+            TipoMensajeria.telegram,
             chatId,
             log.lg_cod,
             usuario.cod,

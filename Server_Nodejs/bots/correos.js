@@ -2,21 +2,35 @@
 const globales = require('../comandos/globales');
 const {getTransporter} =  require('../config/transporter.config.js');
 const usuCorreo = require('../config/correo.config.json');
-const { TipusMensajeria, Rechazado } = require('../mensajeria/mensajeria');
+const { TipoMensajeria: TipoMensajeria, Rechazado } = require('../mensajeria/mensajeria');
 const administrador = require('../config/administrador.config.json');
 
+
+// Constante para almacenar los mensajes de Aviso al administrador 
+const MensajesAdministrador = new Map();
+
+// Matriz para almacenar el proceso de envío de correos
 var enProceso=[];
+
+// Siempre que no esté enviando correos ni queden procesos de enviar correos
 var estoyEnProceso = false;
 
-function creaProceso(mensaje, usuarios, log, alFinalizar){
-    return {
-        mensaje:mensaje,
-        usuarios:usuarios,
-        log:log,
-        alFinalizar:alFinalizar
-    }
+// Si hay una contraseña o usuario mal en el usuario de envio de correos
+// Nodemailer deja de funcionar y lo debemos registrar
+var muertoNodeMailer = false;
+var motivo = '';
+
+function estoyMuerto(){
+    return muertoNodeMailer;
+}
+function dimeLaRazon(){
+    return motivo;
 }
 
+// El servidor de correos no admite conexiones múltiples
+// Por este motivo creamos una cola de forma que cuando
+// finalice un envio se iniciará el siguiente envio
+//
 async function mandaCorreos(mensaje, usuarios, log, alFinalizar){
 
     if(estoyEnProceso){
@@ -31,13 +45,14 @@ async function mandaCorreos(mensaje, usuarios, log, alFinalizar){
 
 }
 
-var muertoNodeMailer = false;
-var motivo = '';
-function estoyMuerto(){
-    return muertoNodeMailer;
-}
-function dimeLaRazon(){
-    return motivo;
+// Creamos el proceso
+function creaProceso(mensaje, usuarios, log, alFinalizar){
+    return {
+        mensaje:mensaje,
+        usuarios:usuarios,
+        log:log,
+        alFinalizar:alFinalizar
+    }
 }
 
 async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
@@ -47,22 +62,31 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
         // vaciamos las tareas pendientes
         alFinalizar([], log);
         var es;
+        // y comunicar que el proceso ha finalizado
         while(es = enProceso.pop()){
             alFinalizar([], es.log);
 
         }
+        // dejamos de estar en poceso
         estoyEnProceso = false;
         return;
     }
+
+    // Ahora podemos crear la matriz que contendrá a las diferentes direcciones
+    // correos que vamos a enviar el mensaje
     var mailList = [];
     var mailUsuario = {}
+
+    // Creación de la dirección para NodeMailer
     for(var i = 0; i<usuarios.length; i++){
         var usuario = usuarios[i];
+
+        // en la lista viene cualquier tipo de usario de mensajeria
         var email = usuario.mensajeria.email;
-        var usuMail =  (usuario.usuario?
+        if(email){
+            var usuMail =  (usuario.usuario?
                         usuario.usuario: '')
                         +'<'+ email +'>';
-        if(email){
             mailList.push(usuMail);
             mailUsuario[email] = usuario;
         }
@@ -105,13 +129,13 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
                 errores = nodeMailError.rejectedErrors;
                 rejected = nodeMailError.rejected;
                 if(nodeMailError.responseCode==535){
+                    // NodeMailes ha muerto
                     todoCorrecto = false;
                     muertoNodeMailer = true;
                     motivo = " --- ¡¡¡EL BOT NODEMAILER HA MUERTO!!! ---\n"
                              + nodeMailError.message+'\nRevisa el archivo: ./config/correo.config.json'
                     globales.msg(nodeMailError.message);
                     globales.msg("Revisa el archivo: ./config/correo.config.json");
-                    //alFinalizar([]);
                 }
             } else {
                 
@@ -131,7 +155,7 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
 
                     // Creamos el objeto rechazado
                     var rechazado = new Rechazado(
-                        TipusMensajeria.email,
+                        TipoMensajeria.email,
                         email,
                         log.lg_cod,
                         usuario.cod,
@@ -171,18 +195,21 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
         });
 }
 
-const MensajesAdministrador = new Map();
 function addMensajeAdminstrador(rechazado){
     try{
         var t = rechazado.tipo;
+        // Si no existe el tipo de mensajería
+        // Montamos un mapa
         if(!MensajesAdministrador.has(t)){
             MensajesAdministrador.set(t, new Map());
         }
         var cod = rechazado.usm_cod;
+
         var m1 = MensajesAdministrador.get(t);
+        // Si no existe código de usuario lo añadimos
+        // para notificar de que este usuario tiene un defecto en la dirección 
         if(!m1.has(cod)){
             m1.set(rechazado.usm_cod, rechazado);
-            //globales.msg('añadiendo');
             globales.msg(m1.get(cod));
         }
     }catch(e){
@@ -193,27 +220,29 @@ function addMensajeAdminstrador(rechazado){
 function enviaFallos(){
     if(muertoNodeMailer) return;
     var mensaje;
+    //Creamos el mensaje con todas las notificaciones
     MensajesAdministrador.forEach(m1 => {
         if(!mensaje){
             mensaje = "  --- Problemas y errores del Sistema de alertas API - 1.0 ---\n\n";
         }
         var descrp;
-        var rr;
-        m1.forEach(r=>{
-            rr = r;
+        var rechz;
+        m1.forEach(rechazado=>{
+            rechz = rechazado;
             if(!descrp){
-                descrp = " + Errores "+(r.tipo.toUpperCase()+':\n\n');
+                descrp = " + Errores "+(rechazado.tipo.toUpperCase()+':\n\n');
             }
-            descrp += "    Usuario: "+ r.usm_cod+', destino: '+r.destino+'\n'
-                    + "    Mensaje: "+ r.razon+'\n'
+            descrp += "    Usuario: "+ rechazado.usm_cod+', destino: '+rechazado.destino+'\n'
+                    + "    Mensaje: "+ rechazado.razon+'\n'
                     + "      ------\n";
         });
-        if(rr){
-            descrp += "     ---- Final "+rr.tipo+' ---\n\n\n';
+        if(rechz){
+            descrp += "     ---- Final "+rechz.tipo+' ---\n\n\n';
         }
         mensaje += descrp;
     });
 
+    // Ahora enviamos el correo
     if(mensaje){
         var log = {
             acc_nombre: "Alertas API",
