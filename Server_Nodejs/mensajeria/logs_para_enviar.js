@@ -1,18 +1,18 @@
 //  Funciones generales del programamuerto
-const globales = require('./globales');
+const globales = require('../comandos/globales');
 const fetch = require('node-fetch');// npm i node-fetch@2
-const ver_acciones = require('./ver_acciones');
-const inserta_log = require('./inserta_log');
+const ver_acciones = require('../comandos/ver_acciones');
+const inserta_log = require('../comandos/inserta_log');
 var nodemailer = require('nodemailer');//NPM para mandar correos
 const conexion = require('../config/db.config.js');
 const tokenBot = require('../config/tokenBot.json');
 const usuCorreo = require('../config/correo.config.json');
-const {multiUsuariosTelegram} = require('./telegram2');
-const {mandaCorreos, enviaFallos, estoyMuerto, dimeLaRazon} = require('./correos2');
+const {multiUsuariosTelegram} = require('../bots/telegram');
+const {mandaCorreos, enviaFallos, estoyMuerto, dimeLaRazon} = require('../bots/correos');
 const administrador = require('../config/administrador.config.json');
-const { Estados } = require('./acciones');
+const { Estados } = require('../comandos/acciones');
 
-const mensajeria = require('./mensajeria');
+const mensajeria = require('../mensajeria/mensajeria');
 //const { enviaFallos,  } = require('./administrador');
 
 

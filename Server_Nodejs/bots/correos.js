@@ -1,8 +1,8 @@
 //  Funciones generales del programa
-const globales = require('./globales');
+const globales = require('../comandos/globales');
 const {getTransporter} =  require('../config/transporter.config.js');
 const usuCorreo = require('../config/correo.config.json');
-const { TipusMensajeria, Rechazado } = require('./mensajeria');
+const { TipusMensajeria, Rechazado } = require('../mensajeria/mensajeria');
 const administrador = require('../config/administrador.config.json');
 
 var enProceso=[];

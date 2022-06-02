@@ -1,5 +1,5 @@
 //  Funciones generales del programa
-const globales = require('./globales');
+const globales = require('../comandos/globales');
 const conexion = require('../config/db.config.js');
 //const { mandaCorreos } = require('./correos2');
 

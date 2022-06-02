@@ -1,16 +1,16 @@
 //  Funciones generales del programa
-const globales = require('./globales');
+const globales = require('../comandos/globales');
 const fetch = require('node-fetch');// npm i node-fetch@2
-const ver_acciones = require('./ver_acciones');
-const inserta_log = require('./inserta_log');
+const ver_acciones = require('../comandos/ver_acciones');
+const inserta_log = require('../comandos/inserta_log');
 var nodemailer = require('nodemailer');//NPM para mandar correos
 const conexion = require('../config/db.config.js');
 const tokenBot = require('../config/tokenBot.json');
 const usuCorreo = require('../config/correo.config.json');
 const TelegramBot = require('node-telegram-bot-api');
-const { Estados } = require('./acciones');
-const { TipusMensajeria, Rechazado } = require('./mensajeria');
-const { addMensajeAdminstrador } = require('./correos2');
+const { Estados } = require('../comandos/acciones');
+const { TipusMensajeria, Rechazado } = require('../mensajeria/mensajeria');
+const { addMensajeAdminstrador } = require('./correos');
 
 
 //  Token del bot

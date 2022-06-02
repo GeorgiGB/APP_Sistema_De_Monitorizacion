@@ -1,9 +1,9 @@
 //  Funciones generales del programa
-const globales = require('./globales');
+const globales = require('../comandos/globales');
 const conexion = require('../config/db.config.js');
 const mensajeria = require('./mensajeria');
-const {multiUsuariosTelegram} = require('./telegram2');
-const {mandaCorreos} = require('./correos2');
+const {multiUsuariosTelegram} = require('../bots/telegram');
+const {mandaCorreos} = require('../bots/correos');
 
 
 async function verMensajesNoEnviados(){
