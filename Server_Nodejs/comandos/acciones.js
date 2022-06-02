@@ -24,7 +24,7 @@ const Diferencia = {
     // dia - hora - min - seg - milis
     dia: 24 * 60 * 60 * 1000,
     hora: 60 * 60 * 1000,
-    cincoMin: 5 * 60 * 1000
+    cincoMin: 1//5 * 60 * 1000
 };
 
 // Las contestaciones de los servidores nos pueden venir en formato JSON o HTML

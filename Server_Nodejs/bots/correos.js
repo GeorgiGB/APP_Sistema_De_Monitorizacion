@@ -1,7 +1,7 @@
 //  Funciones generales del programa
 const globales = require('../comandos/globales');
 const {getTransporter} =  require('../config/transporter.config.js');
-const usuCorreo = require('../config/datos_config');
+const {usuCorreo} = require('../config/datos_config');
 const { TipoMensajeria: TipoMensajeria, Rechazado } = require('../mensajeria/mensajeria');
 const administrador = require('../config/administrador.config.json');
 
@@ -97,7 +97,7 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
         return;
     }
     
-    //  Cuerpo del mensaje enviante
+    console.log(usuCorreo.user)
     var mailOptions = {
         from: usuCorreo.user, // Recoge el usuario escrito en el archivo json
         bcc: mailList, //  Se lo manda a la/s personas que están en el listado de correos 
@@ -145,6 +145,7 @@ async function _mandaCorreos(mensaje, usuarios, log, alFinalizar){
                 errores = info.rejectedErrors;
                 rejected = info.rejected;
             }
+            globales.msg(errores);
 
             // Montamos la estructura de los envios rechazados
             if(errores){

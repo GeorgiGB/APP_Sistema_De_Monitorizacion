@@ -88,7 +88,7 @@ const job = cron.schedule('0 */5 * * * *',()=>{
 
 //job.start();
 
-/*/
+/**/
 acciones.ejecuta(()=>{
     globales.msg('Las acciones han finalizado');
     mensajeria.envia();
