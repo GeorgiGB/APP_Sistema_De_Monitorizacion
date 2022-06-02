@@ -14,7 +14,8 @@ async function cerrar_sesion(json_sesion){
     Petición en la base de datos de la función de cerrar_sesion
     la función cambiara el estado del token de 'true' a 'false'
   */
- let res = await conexion.query("SELECT * FROM cerrar_sesion('"+JSON.stringify(json_sesion)+"')")
+  let consulta = "SELECT * FROM cerrar_sesion($1)"; 
+  let res = await conexion.query(consulta, [JSON.stringify(json_sesion)]);
   return res.rows[0].jresultado;
 }
 

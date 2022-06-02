@@ -24,6 +24,9 @@ const cerrar_sesion = require('./comandos/cerrar_sesion');
 //  Automatiza las acciones de la tabla
 const lanzarAcciones = require('./comandos/lanzar_accion')
 
+//  Llamada del comando logs para registrar un archivos de logs.json
+const logs = require('./comandos/ver_logs');
+
 // Modulo encargado que consulta y ejecuta las acciones a realizar
 const acciones = require('./comandos/acciones');
 
@@ -60,6 +63,11 @@ app.post('/login', (req, res) => {
 app.post('/cerrar_sesion', (req, res) => {
     globales.lanzarPeticion(cerrar_sesion, req, res)
 });
+
+
+app.post('/ver_logs',(req, res) =>{
+    globales.lanzarPeticion(logs, req, res)
+});
 //    ---- Fin llamadas atención al servidor
 
 
@@ -80,7 +88,7 @@ const job = cron.schedule('0 */5 * * * *',()=>{
 
 //job.start();
 
-/**/
+/*/
 acciones.ejecuta(()=>{
     globales.msg('Las acciones han finalizado');
     mensajeria.envia();
@@ -96,4 +104,7 @@ acciones.ejecuta(()=>{
 //! -------------------------------------
 globales.msg("Servidor ok");
 //! -------------------------------------
+
+
+//console.log(process.env.ALERTAS_API_PWD)
 

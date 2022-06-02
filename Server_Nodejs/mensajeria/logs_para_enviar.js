@@ -6,13 +6,9 @@ const {multiUsuariosTelegram} = require('../bots/telegram');
 const {mandaCorreos, enviaFallos, estoyMuerto, dimeLaRazon} = require('../bots/correos');
 const administrador = require('../config/administrador.config.json');
 const { Estados } = require('../comandos/acciones');
+const ver_logs = require('../comandos/ver_logs');
 
 const mensajeria = require('../mensajeria/mensajeria');
-//const { enviaFallos,  } = require('./administrador');
-
-
-
-
 
 const Desde = new Date(0);
 
@@ -32,21 +28,11 @@ async function usuarios_mensajeria(){
     return lista_mensajeria;
 }
 
-async function ver_logs(json_logs){
-    
-    //si el estado esta vacio, mandara los registros del dia actual
-    let res_logs = await conexion.query("SELECT * FROM ver_logs('"+JSON.stringify(json_logs)+"');");
-    
-    let jresultado = res_logs.rows[0].jresultado;
-
-
-    return jresultado;
-}
-
 async function logEnviado(jsonLogEnviado){
     
     //si el estado esta vacio, mandara los registros del dia actual
-    let res_logs = await conexion.query("SELECT * FROM log_enviado('"+JSON.stringify(jsonLogEnviado)+"');");
+    let consulta = "SELECT * FROM log_enviado($1)"; 
+    let res_logs = await conexion.query(consulta, [JSON.stringify(jsonLogEnviado)]);
     
     let jresultado = res_logs.rows[0].jresultado;
 
@@ -55,9 +41,9 @@ async function logEnviado(jsonLogEnviado){
 }
 
 async function registraMensajesNoEnviados(json_logs){
-    
     //si el estado esta vacio, mandara los registros del dia actual
-    let res_logs = await conexion.query("SELECT * FROM registra_mensajes_no_enviados('"+JSON.stringify(json_logs)+"');");
+    let consulta = "SELECT * FROM registra_mensajes_no_enviados($1)"; 
+    let res_logs = await conexion.query(consulta, [JSON.stringify(json_logs)]);
     
     let jresultado = res_logs.rows[0].jresultado;
 

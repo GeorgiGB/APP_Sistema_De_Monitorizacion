@@ -1,7 +1,7 @@
 //  Funciones generales del programa
 const globales = require('../comandos/globales');
 const {getTransporter} =  require('../config/transporter.config.js');
-const usuCorreo = require('../config/correo.config.json');
+const usuCorreo = require('../config/datos_config');
 const { TipoMensajeria: TipoMensajeria, Rechazado } = require('../mensajeria/mensajeria');
 const administrador = require('../config/administrador.config.json');
 

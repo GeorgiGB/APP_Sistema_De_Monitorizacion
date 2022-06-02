@@ -92,6 +92,7 @@ function lanzarPeticion(x, req, res){
 // Se genera la respuesta y el status del error
 // adjuntando la respuesta en formato JSON
 function errorDeServidor(res, err){
+    console.log(err)
     let msg_error = {status : CodigosServidor.error,
         cod_error: -1,
         msg_error: err.name + ': '+ err.message}
