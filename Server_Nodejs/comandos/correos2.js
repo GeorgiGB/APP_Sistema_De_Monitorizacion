@@ -191,6 +191,7 @@ function addMensajeAdminstrador(rechazado){
 }
 
 function enviaFallos(){
+    if(muertoNodeMailer) return;
     var mensaje;
     MensajesAdministrador.forEach(m1 => {
         if(!mensaje){

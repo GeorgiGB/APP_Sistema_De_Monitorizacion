@@ -62,6 +62,7 @@ function peticiones(response, res){
 
 
     msg(status)
+     // Aquí gneramos la respuesta
     header(res).status(status).json(response)
 }
 
