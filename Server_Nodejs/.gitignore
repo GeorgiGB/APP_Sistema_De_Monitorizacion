@@ -6,4 +6,5 @@ package-lock.json
 **/tokenBot.json
 **/transporter.config.js
 **/administrador.config.json
+**/bbdd.config.json
 registroLogs.txt

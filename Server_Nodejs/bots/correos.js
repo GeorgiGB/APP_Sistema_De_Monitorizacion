@@ -1,10 +1,8 @@
 //  Funciones generales del programa
 const globales = require('../comandos/globales');
 const {getTransporter} =  require('../config/transporter.config.js');
-const {usuCorreo} = require('../config/datos_config');
-const { TipoMensajeria: TipoMensajeria, Rechazado } = require('../mensajeria/mensajeria');
-const administrador = require('../config/administrador.config.json');
-
+const {usuCorreo, administrador} = require('../config/datos_config');
+const { TipoMensajeria, Rechazado } = require('../mensajeria/mensajeria');
 
 // Constante para almacenar los mensajes de Aviso al administrador 
 const MensajesAdministrador = new Map();
