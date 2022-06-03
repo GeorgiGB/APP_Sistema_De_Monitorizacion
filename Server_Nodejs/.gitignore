@@ -1,10 +1,10 @@
 #Ignorar carpetas
 /node_modules
 package-lock.json
-**/db.config.js
 **/correo.config.json
 **/tokenBot.json
 **/transporter.config.js
 **/administrador.config.json
 **/bbdd.config.json
+**/db.config.json
 registroLogs.txt
