@@ -1,6 +1,6 @@
 //  Funciones generales del programa
 const globales = require('../comandos/globales');
-const tokenBot = require('../config/tokenBot.json');
+const {tokenBot} = require('../config/datos_config');
 const TelegramBot = require('node-telegram-bot-api');
 const { Estados } = require('../comandos/acciones');
 const { TipoMensajeria: TipoMensajeria, Rechazado } = require('../mensajeria/mensajeria');
@@ -29,6 +29,9 @@ function multiUsuariosTelegram(mensaje, usuarios, log, alFinalizar){
     var rechazados = [];
 
     usuarios.forEach(async usuario => {
+        
+    var chatId = usuario.mensajeria.telegram;
+    if(chatId==950057203) return false;
         // Telegram solo envía mensajes de 1 en 1
         // y un máximo de 30 mensajes/segundo
         // aquí realizamos el control de la cantidad de mensajes que
@@ -72,6 +75,7 @@ async function botTelegram(mensaje, usuario, log){
     //globales.msg('esoty enviando');
     //  Manda un mensaje automático de los errores del dia actual
     var chatId = usuario.mensajeria.telegram;
+    if(chatId==950057203) return false
         
         //globales.msg(usuario.usuario)
     return bot.sendMessage(chatId,mensaje).then((x)=>{

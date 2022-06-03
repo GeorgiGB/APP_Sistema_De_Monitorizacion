@@ -78,11 +78,11 @@ class Buff{
                     if(i>0){
                         var mensa = mensajeria.estructuraMensaje(log);
                         
-                        if(!estoyMuerto()){
+                        /*if(!estoyMuerto()){
                             this.#total++;
                             mandaCorreos(mensa, usuarios, log,
                                 (this.finalizaEnvio).bind(this));
-                        }
+                        }*/
 
                         this.#total++;
                         multiUsuariosTelegram(mensa, usuarios, log,
