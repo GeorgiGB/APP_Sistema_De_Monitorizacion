@@ -1,6 +1,6 @@
 -- FUNCTION: public.ver_acciones(jsonb)
 
--- DROP FUNCTION IF EXISTS public.ver_acciones(jsonb);
+DROP FUNCTION IF EXISTS public.ver_acciones(jsonb);
 
 CREATE OR REPLACE FUNCTION public.ver_acciones(
 	jleer jsonb,
@@ -27,28 +27,38 @@ BEGIN
 	cBusca :='';
     jresultado := '[]';
 	
-	SELECT coalesce(jleer::jsonb->>'busca', '') into cBusca; -- http o api
+	-- SELECT coalesce(jleer::jsonb->>'busca', '') into cBusca; -- http o api
 	
 	CREATE TEMP TABLE IF NOT EXISTS json_select_acc as
-		SELECT acc_fecha_alta as desde, acc_fecha_alta as hasta FROM acciones;
+		SELECT acc_cod as cod, acc_fecha_alta as desde, acc_fecha_alta as hasta FROM acciones;
 		
 	SELECT to_json(array_agg(operacion)) FROM
 	(SELECT ac.* FROM acciones ac, jsonb_populate_record(null::json_select_acc, jleer) j
-		WHERE ac.acc_fecha_alta BETWEEN
-			CASE
-				WHEN j.desde IS null THEN
-				NOW()--indica el dia de hoy
-				ELSE
-				j.desde
-				END
+		WHERE
+        -- Miramos acc_cod
+            CASE
+                WHEN j.cod IS null THEN
+                    true
+                ELSE
+                    ac.acc_cod = j.cod
+                END
+        -- Miramos fechas
+        AND ac.acc_fecha_alta
+            BETWEEN
+                CASE
+                    WHEN j.desde IS null THEN
+                        '1970-01-01' --NOW()--indica el dia de hoy
+                    ELSE
+                        j.desde
+                END
 			AND
 				CASE
 					WHEN j.hasta IS null THEN
 						(NOW()+ interval '1 day')--indica el dia de despues
 				ELSE
-	 			j.hasta
-			END
-			ORDER BY ac.acc_fecha_alta) operacion into jresultado;
+	 			    j.hasta
+			    END
+		ORDER BY ac.acc_fecha_alta) operacion into jresultado;
 			
 			jresultado := coalesce(jresultado, '[]'::jsonb);
 			

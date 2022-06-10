@@ -1,9 +1,9 @@
 -- FUNCTION: public.actualiza_fecha_envio(integer)
 
--- DROP FUNCTION IF EXISTS public.actualiza_fecha_envio(integer);
+DROP FUNCTION IF EXISTS public.actualiza_fecha_envio(integer);
 
 CREATE OR REPLACE FUNCTION public.actualiza_fecha_envio(
-	iid integer,
+	icod integer,
 	OUT jresultado jsonb)
     RETURNS jsonb
     LANGUAGE 'plpgsql'
@@ -21,7 +21,7 @@ BEGIN
 	cError := '';
     jresultado := '[]';
 	
-	UPDATE logs SET lg_enviado = true, lg_fecha_envio = NOW() WHERE lg_id_logs = iId;
+	UPDATE logs SET lg_enviado = true, lg_fecha_envio = NOW() WHERE lg_cod = icod;
 	
 	SELECT ('{"cod_error":"' || icod_error ||'"}')::jsonb || jresultado ::jsonb INTO jresultado;
 	

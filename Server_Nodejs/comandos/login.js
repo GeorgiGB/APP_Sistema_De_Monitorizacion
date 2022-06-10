@@ -1,4 +1,4 @@
-const conexion = require('../config/conexion_bd.js')
+const conexion = require('../config/db.config.js')
 
 // Generar tokens con formato JWT
 const jwt = require('jsonwebtoken');
@@ -12,9 +12,11 @@ async function login(json_login){
             Petición del servidor
             Verificar si el usuario existe y proseguir con la operación
         */
-       
-       let reslogin = await conexion.query("SELECT * FROM login('"+JSON.stringify(json_login)+"')");
-       //   Resultado de la operación
+
+        let consulta = "SELECT * FROM login($1)";
+        let reslogin = await conexion.query(consulta, [JSON.stringify(json_login)]);
+
+        //   Resultado de la operación
         let fila0 = reslogin.rows[0].jresultado;
 
         let fila = fila0[0]
@@ -23,12 +25,13 @@ async function login(json_login){
             //  Insertar token en base de usuarios
             fila.token = getToken(json_login.usu_pwd);
             //  Hacemos la petición a la base de datos
-            let instoken = await conexion.query("SELECT * FROM insertar_token('"+JSON.stringify(fila)+"')");
+            consulta = "SELECT * FROM insertar_token($1)";
+            let instoken = await conexion.query(consulta, [JSON.stringify(fila)]);
             fila = instoken.rows[0].jresultado
         }else{
-            msg(fila0)
             fila = fila0
         }
+        console.log(fila)
         return fila;
     }
 

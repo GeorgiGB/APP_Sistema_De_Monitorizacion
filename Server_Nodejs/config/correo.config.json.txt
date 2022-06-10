@@ -1,0 +1,4 @@
+{
+    "user":"laDireccionDesdeDondeSeEnviaran@losCorreos.electronicos",
+    "pwd":"laContraseña"
+}

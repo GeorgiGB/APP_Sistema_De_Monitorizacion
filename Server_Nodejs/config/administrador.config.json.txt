@@ -1,0 +1,7 @@
+{
+    "usuario":"SiStema de alertas API - 1.0",
+    "mensajeria":{
+        "email": "ladireccionde@correo.com",
+        "telegram": "tuChatIdeTelegram"
+      }
+}

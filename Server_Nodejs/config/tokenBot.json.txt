@@ -1,0 +1,4 @@
+{
+    "token":"elTokenDelBotDeTelegram",
+    "chat_id":"elChatIdDelBot"
+}

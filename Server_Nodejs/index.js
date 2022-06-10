@@ -11,47 +11,37 @@ const cron = require('node-cron')
 
 //  Tratar datos con formato JSON
 const bodyParser = require('body-parser');
+
+//  Funciones generales del programa
+const globales = require('./comandos/globales');
+
 //  Verifica si el usuario existe en el sistema
 const verificar = require('./comandos/login');
 
 //  Cambiara el estado del token del usuario
 const cerrar_sesion = require('./comandos/cerrar_sesion');
 
-//  Funciones generales del programa
-const globales = require('./comandos/globales');
-
-globales.crearJSon('logs', '[{}]');
-
-//! TODO rehacer la función de ver_usuarios_telegram
-//! por ver usuarios_mensajeria
-// Llamada a los usuarios de telegram
-const usuarios_mensajeria = require('./comandos/ver_usuarios_mensajeria');
-
-//! De momento esta llamada se comenta
-// Inicializamos los usuarios de telegram
-//usuarios_mensajeria()
-
+//  Automatiza las acciones de la tabla
+const lanzarAcciones = require('./comandos/lanzar_accion')
 
 //  Llamada del comando logs para registrar un archivos de logs.json
 const logs = require('./comandos/ver_logs');
 
-//  Llamada del bot de Telegram
-const bot = require('./bots/bot_telegram');
+// Modulo encargado que consulta y ejecuta las acciones a realizar
+const acciones = require('./comandos/acciones');
 
-//  Llamada del bot de Correo electrónico
-const mandar_correo = require('./bots/bot_manda_correos');
+// Modulo encargado que consultar y enviar por mensajería
+// los registros de las acciones de la BBDD
+const mensajeria = require('./mensajeria/logs_para_enviar');
 
-//  Ver las acciones del servidor
-const ver_acciones = require('./comandos/ver_acciones')
+// Modulo encargado que consultar y reenviar por mensajería
+// los diferentes registros que no se han podido enviar por diferentes motivos
+const enviaNoEnviados = require('./mensajeria/mensajeria_no_enviada.js');
 
-//  Automatiza las acciones de la tabla
-const lanzarAcciones = require('./comandos/lanzar_accion')
 
 
 let app = express();
 app.set('accesTokenSecret', verificar.llaveSecreta);
-
-const acciones = require('./comandos/acciones');
 
 
 //! Configuración de cors
@@ -62,6 +52,7 @@ app.use(bodyParser.json());
 app.use(express.json())
 app.listen(8080);
 
+// LLamadas que el servidor tiene que atender
 /*
     Iniciar sesión con el usuario
 */
@@ -69,76 +60,51 @@ app.post('/login', (req, res) => {
     globales.lanzarPeticion(verificar, req, res)
 });
 
-
-app.post('/ver_usuarios_mensajeria', (req, res) => {
-    globales.lanzarPeticion(usuarios_mensajeria, req, res)
-});
-
-
-
-
-app.post('/mandar_correo', (req, res) => {
-    globales.lanzarPeticion(mandar_correo, req, res)
-});
-
-
-
-/*
-    POST para crear un archivo de logs
-*/
-app.post('/ver_logs',(req, res) =>{
-    globales.lanzarPeticion(logs, req, res)
-});
-
-
-/*
-    POST para ver la tablas de acciones
-*/
-app.post('/ver_acciones',(req, res) =>{
-    globales.lanzarPeticion(ver_acciones, req, res)
-});
-
-//lanzarAcciones.lanzaAcciones()
-
-/*
-        -------------------------Cerrar Sesion de Usuario-------------------------
-    Cada usuario principal tiene un token asociado el cual solo se usara una vez,
-    durante la sesión iniciada ese token estara activo. Hasta que el usuario decida salir de la aplicación,
-    el cual cambiara al estado de 'false' y no se volvera a utilizar.
-*/
 app.post('/cerrar_sesion', (req, res) => {
     globales.lanzarPeticion(cerrar_sesion, req, res)
 });
 
+
+app.post('/ver_logs',(req, res) =>{
+    globales.lanzarPeticion(logs, req, res)
+});
+//    ---- Fin llamadas atención al servidor
+
+
+// Iniciamos las acciones a ejecutar
 const job = cron.schedule('0 */5 * * * *',()=>{
     globales.msg("hola cada 5'");
 
-    let res_anterior = []
-    logs({desde:"2022-05-17", hasta:"2022-05-20"}).then((x)=>{
-        globales.msg(x)
-        let res = x
-        if(res_anterior!=res){
-            res = res_anterior
-            globales.msg("mandando mensaje desde index")
-            r = bot()
-        }else{
-            globales.msg("no hay novedades")
-    }
-})
-    globales.msg("-----------------------------")
+    acciones.ejecuta(()=>{
+        globales.msg('Las acciones han finalizado');
+        mensajeria.envia();
+    });
 
-    globales.msg('Mandando correo')
-    mandar_correo()
+    // enviaNoEnviados se ejecutará una vez cada hora
+    enviaNoEnviados.envia();
 },{
     scheduled: false
 });
 
 //job.start();
 
-acciones.inicia();
+/**/
+acciones.ejecuta(()=>{
+    globales.msg('Las acciones han finalizado');
+    mensajeria.envia();
+    enviaNoEnviados.envia();
+});
+/**/
+//mensajeria.envia();
+
+//
+//enviaNoEnviados.envia();
+//
 
 //! -------------------------------------
 globales.msg("Servidor ok");
 //! -------------------------------------
 
-//bot(); //BOT DE TELEGRAM INICIALIZADO
+
+//console.log(process.env.ALERTAS_API_PWD)
+

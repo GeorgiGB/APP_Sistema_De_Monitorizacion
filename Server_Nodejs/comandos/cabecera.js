@@ -1,4 +1,6 @@
-//  Función que sirve para la cabecera de todas las peticiones
+
+// Crea las cabeceras comunes para El response del servidor ante cualquier petición
+// Función que sirve para la cabecera de todas las peticiones
 function cabecera(response){
     response.header("Access-Control-Allow-Headers", "Content-Type")
     .header("Access-Control-Allow-Credentials", "true")

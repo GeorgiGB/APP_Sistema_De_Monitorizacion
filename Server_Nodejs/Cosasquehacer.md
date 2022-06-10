@@ -70,10 +70,9 @@ Una vez escrito la configuración del bot nos dirigimos al archivo principal de 
 ```js
 const TelegramBot = require('node-telegram-bot-api');
 var globales = require('../comandos/globales')
-const tokenBot = require('./tokenBot.json')
+const tokenBot = require('../config/tokenBot.json')
 const notificacion = require('./notificacion')
-globales.crearJSon('ver_usuarios_mensajeria','[{}]')
-const ust = require('../ver_usuarios_mensajeria.json')
+const ust = require('../usuarios_mensajeria.json')
 
 async function botTelegram(){
 //  Token del bot
